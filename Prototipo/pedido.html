@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido #12345 - ConstrutoraPro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { brand: { 50: '#fff7ed', 100: '#ffedd5', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 900: '#7c2d12' } },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: { 'fade-in': 'fadeIn 0.5s ease-out forwards' },
+                    keyframes: { fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } } }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .timeline-line { position: absolute; top: 14px; left: 0; width: 100%; height: 4px; background: #e5e7eb; z-index: 0; }
+        .timeline-progress { position: absolute; top: 14px; left: 0; height: 4px; background: #ea580c; z-index: 0; transition: width 1s ease-out; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 w-full bg-white shadow-sm z-50 border-b border-gray-100">
+        <div class="container mx-auto px-4 h-20 flex items-center justify-between gap-4">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div class="bg-gradient-to-br from-brand-500 to-brand-600 text-white p-2 rounded-lg shadow-lg group-hover:scale-105 transition-transform"><i class="ph-bold ph-hammer text-2xl"></i></div>
+                <span class="text-2xl font-bold tracking-tight text-gray-900 hidden sm:block">Construtora<span class="text-brand-500">Pro</span></span>
+            </a>
+            <div class="flex items-center gap-6">
+                <a href="profile.html" class="text-sm font-bold text-gray-500 hover:text-brand-600 flex items-center gap-2">
+                    <i class="ph-bold ph-user"></i> Minha Conta
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 pt-28 pb-12 animate-fade-in min-h-screen">
+        
+        <!-- Breadcrumbs & Voltar -->
+        <div class="mb-8">
+            <a href="profile.html" class="flex items-center gap-2 text-gray-500 hover:text-brand-600 font-semibold transition-colors mb-4 w-fit">
+                <i class="ph-bold ph-arrow-left"></i> Voltar para Meus Pedidos
+            </a>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                        Pedido #12345
+                        <span class="bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full border border-blue-200">Em Trânsito</span>
+                    </h1>
+                    <p class="text-gray-500 mt-1">Realizado em 28 de Dezembro de 2024</p>
+                </div>
+                <div class="flex gap-3">
+                    <button class="flex items-center gap-2 px-4 py-2 border border-gray-200 bg-white rounded-lg text-gray-600 font-bold text-sm hover:bg-gray-50 transition-colors">
+                        <i class="ph-bold ph-file-pdf"></i> Nota Fiscal
+                    </button>
+                    <button class="flex items-center gap-2 px-4 py-2 bg-brand-600 text-white rounded-lg font-bold text-sm hover:bg-brand-700 shadow-lg shadow-brand-500/20 transition-all">
+                        <i class="ph-bold ph-whatsapp-logo"></i> Preciso de Ajuda
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Timeline de Rastreamento -->
+        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 mb-8 overflow-hidden">
+            <h3 class="font-bold text-gray-900 mb-8">Acompanhamento da Entrega</h3>
+            
+            <div class="relative px-4">
+                <!-- Linhas de Fundo -->
+                <div class="timeline-line"></div>
+                <!-- Barra de Progresso (75% = Em Trânsito) -->
+                <div class="timeline-progress" style="width: 75%"></div>
+
+                <div class="relative flex justify-between z-10">
+                    <!-- Step 1: Realizado -->
+                    <div class="flex flex-col items-center gap-2 text-center w-24">
+                        <div class="w-8 h-8 rounded-full bg-brand-600 text-white flex items-center justify-center border-4 border-white shadow-sm">
+                            <i class="ph-bold ph-check"></i>
+                        </div>
+                        <p class="text-xs font-bold text-brand-700">Realizado</p>
+                        <p class="text-[10px] text-gray-400">28/12, 10:30</p>
+                    </div>
+
+                    <!-- Step 2: Pagamento -->
+                    <div class="flex flex-col items-center gap-2 text-center w-24">
+                        <div class="w-8 h-8 rounded-full bg-brand-600 text-white flex items-center justify-center border-4 border-white shadow-sm">
+                            <i class="ph-bold ph-check"></i>
+                        </div>
+                        <p class="text-xs font-bold text-brand-700">Aprovado</p>
+                        <p class="text-[10px] text-gray-400">28/12, 10:35</p>
+                    </div>
+
+                    <!-- Step 3: Transporte (Ativo) -->
+                    <div class="flex flex-col items-center gap-2 text-center w-24">
+                        <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center border-4 border-blue-100 shadow-md animate-pulse">
+                            <i class="ph-bold ph-truck"></i>
+                        </div>
+                        <p class="text-xs font-bold text-blue-700">Em Trânsito</p>
+                        <p class="text-[10px] text-gray-400">Previsão: 05/01</p>
+                    </div>
+
+                    <!-- Step 4: Entregue -->
+                    <div class="flex flex-col items-center gap-2 text-center w-24">
+                        <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-400 flex items-center justify-center border-4 border-white">
+                            <i class="ph-bold ph-package"></i>
+                        </div>
+                        <p class="text-xs font-bold text-gray-400">Entregue</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-8">
+            
+            <!-- Lista de Produtos -->
+            <div class="w-full lg:w-2/3 space-y-6">
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="p-6 border-b border-gray-100 bg-gray-50/50">
+                        <h3 class="font-bold text-gray-900">Itens do Pedido</h3>
+                    </div>
+                    <div class="divide-y divide-gray-100">
+                        <!-- Item 1 -->
+                        <div class="p-6 flex items-center gap-4">
+                            <div class="w-16 h-16 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=150&q=80" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-0.5">Ferramentas</p>
+                                <h4 class="font-bold text-gray-800 text-sm truncate">Furadeira Parafusadeira Impacto 12V</h4>
+                                <p class="text-xs text-gray-500 mt-1">Qtd: 1</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-bold text-gray-900">R$ 289,90</span>
+                            </div>
+                        </div>
+                        <!-- Item 2 -->
+                        <div class="p-6 flex items-center gap-4">
+                            <div class="w-16 h-16 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=150&q=80" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-0.5">Cimento & Argamassa</p>
+                                <h4 class="font-bold text-gray-800 text-sm truncate">Cimento CP II-E-32 50kg Votorantim</h4>
+                                <p class="text-xs text-gray-500 mt-1">Qtd: 5</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="font-bold text-gray-900">R$ 174,50</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumo e Endereço -->
+            <div class="w-full lg:w-1/3 space-y-6">
+                
+                <!-- Resumo Financeiro -->
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
+                    <h3 class="font-bold text-gray-900 mb-4">Resumo Financeiro</h3>
+                    <div class="space-y-2 text-sm text-gray-600 border-b border-gray-100 pb-4 mb-4">
+                        <div class="flex justify-between"><span>Subtotal</span><span>R$ 464,40</span></div>
+                        <div class="flex justify-between"><span>Frete</span><span class="text-green-600 font-bold">Grátis</span></div>
+                        <div class="flex justify-between"><span>Desconto</span><span class="text-green-600">- R$ 20,00</span></div>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="font-bold text-gray-900">Total Pago</span>
+                        <span class="text-xl font-extrabold text-brand-600">R$ 444,40</span>
+                    </div>
+                </div>
+
+                <!-- Informações de Entrega -->
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="bg-gray-100 p-2 rounded-lg text-gray-600"><i class="ph-bold ph-map-pin"></i></div>
+                        <h3 class="font-bold text-gray-900">Endereço de Entrega</h3>
+                    </div>
+                    <p class="text-sm text-gray-600 leading-relaxed">
+                        <span class="font-bold text-gray-800 block">Carlos Silva</span>
+                        Rua das Flores, 123 - Centro<br>
+                        São Paulo - SP<br>
+                        CEP: 01000-000
+                    </p>
+                </div>
+
+                <!-- Forma de Pagamento -->
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="bg-gray-100 p-2 rounded-lg text-gray-600"><i class="ph-bold ph-credit-card"></i></div>
+                        <h3 class="font-bold text-gray-900">Pagamento</h3>
+                    </div>
+                    <p class="text-sm text-gray-600">
+                        Cartão de Crédito<br>
+                        Mastercard terminado em <strong>8892</strong><br>
+                        Parcelado em 3x
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="py-8 text-center text-xs text-gray-400 border-t border-gray-100 mt-12">
+        <p>&copy; 2024 ConstrutoraPro. Todos os direitos reservados.</p>
+    </footer>
+
+</body>
+</html>

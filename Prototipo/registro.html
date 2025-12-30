@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta - ConstrutoraPro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { brand: { 50: '#fff7ed', 100: '#ffedd5', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 900: '#7c2d12' } },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: { 'fade-in': 'fadeIn 0.5s ease-out forwards' },
+                    keyframes: { fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } } }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Header Simplificado -->
+    <header class="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md shadow-sm z-50 border-b border-gray-100">
+        <div class="container mx-auto px-4 h-20 flex items-center justify-center">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div class="bg-gradient-to-br from-brand-500 to-brand-600 text-white p-2 rounded-lg shadow-lg group-hover:scale-105 transition-transform"><i class="ph-bold ph-hammer text-2xl"></i></div>
+                <span class="text-2xl font-bold tracking-tight text-gray-900">Construtora<span class="text-brand-500">Pro</span></span>
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-1 flex items-center justify-center px-4 py-28 animate-fade-in">
+        <div class="w-full max-w-lg bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+            <div class="p-8">
+                <div class="text-center mb-8">
+                    <h1 class="text-2xl font-bold text-gray-900">Crie sua conta</h1>
+                    <p class="text-sm text-gray-500 mt-1">Junte-se a nós e comece a construir seus sonhos.</p>
+                </div>
+
+                <form onsubmit="event.preventDefault(); window.location.href='profile.html'" class="space-y-5">
+                    
+                    <!-- Nome -->
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-gray-700 uppercase tracking-wider ml-1">Nome Completo</label>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="ph-bold ph-user text-gray-400 group-focus-within:text-brand-500 transition-colors"></i>
+                            </div>
+                            <input type="text" placeholder="Seu nome" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block w-full pl-10 p-3 outline-none transition-all" required>
+                        </div>
+                    </div>
+
+                    <!-- Email -->
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-bold text-gray-700 uppercase tracking-wider ml-1">E-mail</label>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <i class="ph-bold ph-envelope text-gray-400 group-focus-within:text-brand-500 transition-colors"></i>
+                            </div>
+                            <input type="email" placeholder="seu@email.com" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block w-full pl-10 p-3 outline-none transition-all" required>
+                        </div>
+                    </div>
+
+                    <!-- Senha -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-gray-700 uppercase tracking-wider ml-1">Senha</label>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="ph-bold ph-lock text-gray-400 group-focus-within:text-brand-500 transition-colors"></i>
+                                </div>
+                                <input type="password" placeholder="Mín. 8 caracteres" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block w-full pl-10 p-3 outline-none transition-all" required>
+                            </div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="text-xs font-bold text-gray-700 uppercase tracking-wider ml-1">Confirmar Senha</label>
+                            <div class="relative group">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="ph-bold ph-lock-key text-gray-400 group-focus-within:text-brand-500 transition-colors"></i>
+                                </div>
+                                <input type="password" placeholder="Repita a senha" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-brand-500 focus:border-brand-500 block w-full pl-10 p-3 outline-none transition-all" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Termos -->
+                    <div class="flex items-start">
+                        <div class="flex items-center h-5">
+                            <input id="terms" type="checkbox" class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-brand-300 text-brand-600 cursor-pointer" required>
+                        </div>
+                        <label for="terms" class="ml-2 text-sm font-medium text-gray-500 cursor-pointer">Li e concordo com os <a href="#" class="text-brand-600 hover:underline">Termos de Uso</a> e <a href="#" class="text-brand-600 hover:underline">Política de Privacidade</a>.</label>
+                    </div>
+
+                    <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-brand-500/20 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2">
+                        Criar Conta
+                        <i class="ph-bold ph-user-plus"></i>
+                    </button>
+                </form>
+            </div>
+            
+            <div class="bg-gray-50 p-6 border-t border-gray-100 text-center">
+                <p class="text-sm text-gray-600">
+                    Já tem uma conta? 
+                    <a href="login.html" class="font-bold text-brand-600 hover:text-brand-700 hover:underline">Entrar</a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-6 text-center text-xs text-gray-400">
+        &copy; 2024 ConstrutoraPro. Todos os direitos reservados.
+    </footer>
+
+</body>
+</html>

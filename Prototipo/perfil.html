@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Conta - ConstrutoraPro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { brand: { 50: '#fff7ed', 100: '#ffedd5', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 900: '#7c2d12' } },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: { 'fade-in': 'fadeIn 0.5s ease-out forwards' },
+                    keyframes: { fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } } }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .sidebar-link.active { background-color: #fff7ed; color: #ea580c; border-right: 3px solid #ea580c; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+    
+    <!-- Header (Consistente) -->
+    <header class="fixed top-0 left-0 w-full bg-white shadow-sm z-50 border-b border-gray-100">
+        <div class="container mx-auto px-4 h-20 flex items-center justify-between gap-4">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div class="bg-gradient-to-br from-brand-500 to-brand-600 text-white p-2 rounded-lg shadow-lg group-hover:scale-105 transition-transform"><i class="ph-bold ph-hammer text-2xl"></i></div>
+                <span class="text-2xl font-bold tracking-tight text-gray-900 hidden sm:block">Construtora<span class="text-brand-500">Pro</span></span>
+            </a>
+            <div class="flex-1 max-w-xl mx-auto hidden md:block">
+                <div class="relative group">
+                    <input type="text" placeholder="Buscar produtos..." class="w-full bg-gray-100 border-none rounded-full py-2.5 pl-12 pr-4 focus:ring-2 focus:ring-brand-500 transition-all">
+                    <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg group-focus-within:text-brand-500 transition-colors"></i>
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="relative group cursor-pointer py-2" id="cart-container" onclick="window.location.href='cart.html'">
+                    <div class="relative p-2 hover:bg-gray-100 rounded-full transition-colors">
+                        <i class="ph ph-shopping-cart text-2xl text-gray-700 hover:text-brand-600 transition-colors"></i>
+                        <span id="cart-badge" class="absolute top-0 right-0 bg-brand-600 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full scale-0 transition-transform shadow-sm border border-white">0</span>
+                    </div>
+                </div>
+                <div class="hidden sm:flex items-center gap-3 pl-4 border-l border-gray-200 cursor-pointer">
+                    <div class="text-right">
+                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Olá, Carlos</p>
+                        <p class="text-sm font-bold text-gray-800">Minha Conta</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden border-2 border-brand-500 shadow-sm"><img src="https://ui-avatars.com/api/?name=Carlos+Silva&background=0D8ABC&color=fff"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <main class="container mx-auto px-4 pt-28 pb-12 animate-fade-in min-h-screen">
+        
+        <div class="flex flex-col lg:flex-row gap-8">
+            
+            <!-- Sidebar de Navegação -->
+            <aside class="w-full lg:w-1/4">
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden sticky top-24">
+                    <div class="p-6 text-center border-b border-gray-100 bg-gradient-to-b from-gray-50 to-white">
+                        <div class="w-20 h-20 mx-auto rounded-full bg-gray-200 border-4 border-white shadow-md overflow-hidden mb-3">
+                            <img src="https://ui-avatars.com/api/?name=Carlos+Silva&background=0D8ABC&color=fff&size=128" class="w-full h-full object-cover">
+                        </div>
+                        <h2 class="font-bold text-lg text-gray-900">Carlos Silva</h2>
+                        <p class="text-xs text-gray-500">Membro desde 2023</p>
+                    </div>
+                    <nav class="p-2 space-y-1">
+                        <button onclick="showSection('personal')" id="nav-personal" class="sidebar-link active w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-all">
+                            <i class="ph-bold ph-user text-lg"></i> Dados Pessoais
+                        </button>
+                        <button onclick="showSection('orders')" id="nav-orders" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-all">
+                            <i class="ph-bold ph-package text-lg"></i> Meus Pedidos
+                        </button>
+                        <button onclick="showSection('addresses')" id="nav-addresses" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-all">
+                            <i class="ph-bold ph-map-pin text-lg"></i> Endereços
+                        </button>
+                        <button onclick="showSection('wallet')" id="nav-wallet" class="sidebar-link w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-all">
+                            <i class="ph-bold ph-credit-card text-lg"></i> Carteira
+                        </button>
+                        <div class="h-px bg-gray-100 my-2"></div>
+                        <button onclick="alert('Logout')" class="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-lg transition-all">
+                            <i class="ph-bold ph-sign-out text-lg"></i> Sair da Conta
+                        </button>
+                    </nav>
+                </div>
+            </aside>
+            
+            <!-- Área de Conteúdo -->
+            <div class="w-full lg:w-3/4">
+                
+                <!-- SEÇÃO: Dados Pessoais -->
+                <div id="section-personal" class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 lg:p-8 animate-fade-in">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                        <i class="ph-duotone ph-user-circle text-brand-500 text-2xl"></i> Informações Pessoais
+                    </h2>
+                    
+                    <form onsubmit="event.preventDefault(); showToast('Dados atualizados com sucesso!');" class="space-y-6 max-w-2xl">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-gray-500 uppercase">Nome Completo</label>
+                                <input type="text" value="Carlos Silva" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium text-gray-800 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-gray-500 uppercase">CPF</label>
+                                <input type="text" value="***.456.789-**" disabled class="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium text-gray-400 cursor-not-allowed">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-gray-500 uppercase">E-mail</label>
+                                <input type="email" value="carlos.silva@email.com" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium text-gray-800 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-xs font-bold text-gray-500 uppercase">Telefone / WhatsApp</label>
+                                <input type="tel" value="(11) 98765-4321" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium text-gray-800 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors">
+                            </div>
+                        </div>
+                        
+                        <div class="pt-4 border-t border-gray-100 flex justify-end gap-3">
+                            <button type="button" class="px-6 py-2.5 rounded-xl border border-gray-300 text-gray-600 font-bold text-sm hover:bg-gray-50 transition-colors">Cancelar</button>
+                            <button type="submit" class="px-6 py-2.5 rounded-xl bg-brand-600 text-white font-bold text-sm hover:bg-brand-700 shadow-lg shadow-brand-500/20 transition-all active:scale-95">Salvar Alterações</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- SEÇÃO: Meus Pedidos -->
+                <div id="section-orders" class="hidden space-y-6 animate-fade-in">
+                    <!-- Pedido 1 -->
+                    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="p-6 border-b border-gray-100 flex flex-wrap justify-between items-center gap-4 bg-gray-50/50">
+                            <div>
+                                <span class="text-xs text-gray-500 font-bold uppercase">Pedido #12345</span>
+                                <p class="text-sm text-gray-400">Realizado em 15 de Out, 2023</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 border border-green-200">
+                                    <span class="w-2 h-2 rounded-full bg-green-500"></span> Entregue
+                                </span>
+                                <button class="text-brand-600 text-sm font-bold hover:underline">Ver Detalhes</button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-16 h-16 bg-gray-100 rounded-lg border border-gray-200 overflow-hidden"><img src="https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=150&q=80" class="w-full h-full object-cover"></div>
+                                <div class="w-16 h-16 bg-gray-100 rounded-lg border border-gray-200 overflow-hidden"><img src="https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=150&q=80" class="w-full h-full object-cover"></div>
+                                <div class="w-16 h-16 bg-gray-100 rounded-lg border border-gray-200 flex items-center justify-center text-xs font-bold text-gray-500">+2</div>
+                            </div>
+                            <div class="flex justify-between items-center pt-2">
+                                <p class="text-sm text-gray-500">Total do pedido: <span class="font-bold text-gray-900">R$ 459,90</span></p>
+                                <button class="px-4 py-2 border border-brand-200 text-brand-600 font-bold text-sm rounded-lg hover:bg-brand-50 transition-colors">Comprar Novamente</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pedido 2 -->
+                    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="p-6 border-b border-gray-100 flex flex-wrap justify-between items-center gap-4 bg-gray-50/50">
+                            <div>
+                                <span class="text-xs text-gray-500 font-bold uppercase">Pedido #12399</span>
+                                <p class="text-sm text-gray-400">Realizado em 28 de Dez, 2023</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700 border border-blue-200">
+                                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span> Em Trânsito
+                                </span>
+                                <button class="text-brand-600 text-sm font-bold hover:underline">Rastrear</button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div class="w-16 h-16 bg-gray-100 rounded-lg border border-gray-200 overflow-hidden"><img src="https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=150&q=80" class="w-full h-full object-cover"></div>
+                            </div>
+                            <div class="flex justify-between items-center pt-2">
+                                <p class="text-sm text-gray-500">Total do pedido: <span class="font-bold text-gray-900">R$ 129,90</span></p>
+                                <p class="text-xs text-gray-400">Chega até 05/01</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SEÇÃO: Endereços -->
+                <div id="section-addresses" class="hidden animate-fade-in">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Card Endereço 1 -->
+                        <div class="bg-white rounded-2xl p-6 border-2 border-brand-500 shadow-sm relative group">
+                            <div class="absolute top-4 right-4 bg-brand-500 text-white text-[10px] font-bold px-2 py-0.5 rounded">PRINCIPAL</div>
+                            <div class="flex items-start gap-4 mb-4">
+                                <div class="bg-brand-50 text-brand-600 p-2 rounded-lg"><i class="ph-fill ph-house text-xl"></i></div>
+                                <div>
+                                    <h4 class="font-bold text-gray-900">Casa</h4>
+                                    <p class="text-sm text-gray-500 leading-snug mt-1">Rua das Flores, 123 - Centro<br>São Paulo - SP<br>CEP: 01000-000</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3 mt-4 pt-4 border-t border-gray-100">
+                                <button class="text-xs font-bold text-gray-500 hover:text-brand-600">Editar</button>
+                                <button class="text-xs font-bold text-red-400 hover:text-red-600">Excluir</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Card Adicionar Novo -->
+                        <button class="bg-gray-50 rounded-2xl p-6 border-2 border-dashed border-gray-300 flex flex-col items-center justify-center gap-2 text-gray-400 hover:border-brand-400 hover:text-brand-600 hover:bg-brand-50 transition-all h-full min-h-[200px]">
+                            <i class="ph-bold ph-plus-circle text-3xl"></i>
+                            <span class="font-bold text-sm">Adicionar Novo Endereço</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- SEÇÃO: Carteira -->
+                <div id="section-wallet" class="hidden bg-white rounded-3xl shadow-sm border border-gray-100 p-6 lg:p-8 animate-fade-in text-center py-20">
+                    <div class="bg-gray-50 p-6 rounded-full inline-block mb-4">
+                        <i class="ph-duotone ph-wallet text-6xl text-gray-300"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800">Em Breve</h3>
+                    <p class="text-gray-500 mt-2">Estamos trabalhando para trazer sua carteira digital.</p>
+                </div>
+                
+            </div>
+        </div>
+    </main>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-gray-900 text-white pl-4 pr-6 py-4 rounded-xl shadow-2xl transform translate-y-32 transition-transform duration-500 flex items-center gap-4 z-50 border border-gray-700/50 backdrop-blur-md">
+        <div class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg"><i class="ph-bold ph-check text-lg"></i></div>
+        <div><h4 class="font-bold text-sm">Sucesso!</h4><p class="text-xs text-gray-400 mt-0.5" id="toast-message">Ação realizada.</p></div>
+    </div>
+    
+    <script>
+        // --- Navegação entre Abas ---
+        function showSection(sectionId) {
+            // Esconde todas as seções
+            ['personal', 'orders', 'addresses', 'wallet'].forEach(id => {
+                document.getElementById(`section-${id}`).classList.add('hidden');
+                document.getElementById(`nav-${id}`).classList.remove('active');
+                document.getElementById(`nav-${id}`).classList.replace('text-ea580c', 'text-gray-600');
+                document.getElementById(`nav-${id}`).classList.remove('bg-brand-50');
+            });
+            
+            // Mostra a selecionada
+            document.getElementById(`section-${sectionId}`).classList.remove('hidden');
+            const nav = document.getElementById(`nav-${sectionId}`);
+            nav.classList.add('active');
+        }
+        
+        // --- Cart Badge Logic ---
+        function updateHeaderCart() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const count = cart.reduce((acc, item) => acc + item.quantity, 0);
+            const badge = document.getElementById('cart-badge');
+            
+            badge.textContent = count;
+            if (count > 0) badge.classList.remove('scale-0');
+            else badge.classList.add('scale-0');
+        }
+        
+        // --- Toast Logic ---
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            const m = document.getElementById('toast-message');
+            m.textContent = msg;
+            t.classList.remove('translate-y-32');
+            setTimeout(() => t.classList.add('translate-y-32'), 3000);
+        }
+        
+        // Init
+        updateHeaderCart();
+    </script>
+</body>
+</html>

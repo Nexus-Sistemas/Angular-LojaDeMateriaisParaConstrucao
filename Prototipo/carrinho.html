@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Carrinho - ConstrutoraPro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { brand: { 50: '#fff7ed', 100: '#ffedd5', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 900: '#7c2d12' } },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: { 'fade-in': 'fadeIn 0.5s ease-out forwards' },
+                    keyframes: { fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } } }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+    
+    <!-- Popup Flutuante de Produto (Quick View - Aprimorado - Sem Botões) -->
+    <div id="product-hover-popup" class="fixed z-[100] bg-white p-4 rounded-2xl shadow-2xl border border-gray-100 w-72 pointer-events-none hidden opacity-0 scale-95 transition-all duration-200">
+        <!-- Imagem e Badges -->
+        <div class="relative w-full aspect-video bg-gray-50 rounded-xl overflow-hidden mb-3 shadow-inner">
+            <img id="popup-img" src="" class="w-full h-full object-cover">
+            <div id="popup-badge" class="absolute top-2 right-2 bg-brand-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm hidden">OFERTA</div>
+        </div>
+        
+        <!-- Conteúdo Rico -->
+        <div class="space-y-2">
+            <div>
+                <p id="popup-category" class="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-0.5"></p>
+                <h4 id="popup-title" class="font-bold text-gray-900 text-sm leading-tight line-clamp-2"></h4>
+            </div>
+            
+            <!-- Avaliação -->
+            <div class="flex items-center gap-1">
+                <div class="flex text-yellow-400 text-xs" id="popup-stars"></div>
+                <span class="text-[10px] text-gray-400 font-medium">(4.8)</span>
+            </div>
+            
+            <!-- Descrição Curta -->
+            <p class="text-xs text-gray-500 line-clamp-3 leading-relaxed">
+                Produto de alta qualidade ideal para reformas e construções. Acabamento premium e durabilidade garantida para sua obra.
+            </p>
+            
+            <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-50">
+                <div class="flex flex-col">
+                    <span class="text-[10px] text-gray-400 line-through hidden" id="popup-old-price"></span>
+                    <span id="popup-price" class="font-extrabold text-brand-600 text-lg leading-none"></span>
+                </div>
+                <span id="popup-stock" class="text-[10px] px-2 py-1 rounded-full font-bold"></span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Header Simplificado -->
+    <header class="fixed top-0 left-0 w-full bg-white shadow-sm z-50 border-b border-gray-100">
+        <div class="container mx-auto px-4 h-20 flex items-center justify-between gap-4">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div class="bg-gradient-to-br from-brand-500 to-brand-600 text-white p-2 rounded-lg shadow-lg group-hover:scale-105 transition-transform"><i class="ph-bold ph-hammer text-2xl"></i></div>
+                <span class="text-2xl font-bold tracking-tight text-gray-900 hidden sm:block">Construtora<span class="text-brand-500">Pro</span></span>
+            </a>
+            <div class="flex items-center gap-2 text-sm font-medium text-gray-500">
+                <i class="ph-fill ph-lock-key text-green-500 text-lg"></i> Compra Segura
+            </div>
+        </div>
+    </header>
+    
+    <main class="container mx-auto px-4 pt-28 pb-12 animate-fade-in min-h-screen">
+        
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+            <i class="ph-duotone ph-shopping-cart text-brand-500"></i> Seu Carrinho
+        </h1>
+        
+        <!-- Estado Vazio (Inicialmente Oculto) -->
+        <div id="empty-cart" class="hidden flex-col items-center justify-center py-20 bg-white rounded-3xl border border-dashed border-gray-300 text-center">
+            <div class="bg-gray-50 p-6 rounded-full mb-6">
+                <i class="ph-duotone ph-shopping-cart text-6xl text-gray-300"></i>
+            </div>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Seu carrinho está vazio</h2>
+            <p class="text-gray-500 mb-8 max-w-sm mx-auto">Parece que você ainda não escolheu seus materiais de construção.</p>
+            <a href="index.html" class="bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 px-8 rounded-xl transition-all shadow-lg shadow-brand-500/20">
+                Voltar para o Catálogo
+            </a>
+        </div>
+        
+        <!-- Conteúdo do Carrinho -->
+        <div id="cart-content" class="flex flex-col lg:flex-row gap-8 items-start mb-16">
+            
+            <!-- Lista de Produtos -->
+            <div class="w-full lg:w-2/3 bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="p-6 border-b border-gray-100 hidden md:block">
+                    <div class="grid grid-cols-12 gap-4 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                        <div class="col-span-6">Produto</div>
+                        <div class="col-span-2 text-center">Qtd</div>
+                        <div class="col-span-2 text-right">Preço Un.</div>
+                        <div class="col-span-2 text-right">Total</div>
+                    </div>
+                </div>
+                
+                <div id="cart-items-container" class="divide-y divide-gray-100">
+                    <!-- Itens inseridos via JS -->
+                </div>
+            </div>
+            
+            <!-- Resumo do Pedido -->
+            <div class="w-full lg:w-1/3 sticky top-24 space-y-6">
+                
+                <!-- Card de Resumo -->
+                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
+                    <h3 class="font-bold text-lg text-gray-900 mb-6">Resumo do Pedido</h3>
+                    
+                    <!-- Calculadora de Frete Integrada -->
+                    <div class="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="text-xs font-bold text-gray-700 uppercase">Entrega</label>
+                            <button onclick="toggleCepEdit()" id="btn-change-cep" class="text-xs text-brand-600 font-bold hover:underline hidden">Alterar CEP</button>
+                        </div>
+                        
+                        <!-- Input CEP -->
+                        <div id="cep-input-group" class="flex gap-2">
+                            <input type="text" id="cart-zip" placeholder="00000-000" maxlength="9" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-500">
+                            <button onclick="calcCartShipping()" class="bg-white border border-gray-300 text-gray-700 font-bold px-3 py-2 rounded-lg text-sm hover:bg-gray-100 transition-colors">OK</button>
+                        </div>
+                        
+                        <!-- Opções de Frete (Oculto inicialmente) -->
+                        <div id="shipping-options" class="hidden mt-3 space-y-2">
+                            <label class="flex items-center justify-between p-2 border border-brand-200 bg-brand-50 rounded-lg cursor-pointer">
+                                <div class="flex items-center gap-2">
+                                    <input type="radio" name="shipping" value="pac" checked onchange="updateShippingCost(15.90)" class="text-brand-600 focus:ring-brand-500">
+                                    <div>
+                                        <span class="block text-xs font-bold text-gray-800">Econômica</span>
+                                        <span class="block text-[10px] text-gray-500">5 a 7 dias úteis</span>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-bold text-gray-800">R$ 15,90</span>
+                            </label>
+                            <label class="flex items-center justify-between p-2 border border-gray-200 bg-white rounded-lg cursor-pointer hover:border-gray-300">
+                                <div class="flex items-center gap-2">
+                                    <input type="radio" name="shipping" value="sedex" onchange="updateShippingCost(32.50)" class="text-brand-600 focus:ring-brand-500">
+                                    <div>
+                                        <span class="block text-xs font-bold text-gray-800">Rápida</span>
+                                        <span class="block text-[10px] text-gray-500">1 a 2 dias úteis</span>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-bold text-gray-800">R$ 32,50</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3 mb-6 border-b border-gray-100 pb-6">
+                        <div class="flex justify-between text-sm text-gray-600">
+                            <span>Subtotal</span>
+                            <span id="summary-subtotal" class="font-medium">R$ 0,00</span>
+                        </div>
+                        <div class="flex justify-between text-sm text-gray-600 items-center">
+                            <span>Frete</span>
+                            <span id="summary-shipping" class="text-sm font-medium text-gray-500">Calcular</span>
+                        </div>
+                        <div class="flex justify-between text-sm text-gray-600">
+                            <span>Descontos</span>
+                            <span id="summary-discount" class="text-green-600 font-medium">- R$ 0,00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-end mb-8">
+                        <span class="font-bold text-gray-800">Total</span>
+                        <div class="text-right">
+                            <span id="summary-total" class="text-2xl font-extrabold text-brand-600 block leading-none">R$ 0,00</span>
+                            <span class="text-[10px] text-gray-400 font-medium">em até 10x sem juros</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div class="relative">
+                            <input type="text" placeholder="Cupom de desconto" class="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-brand-500 transition-colors">
+                            <button class="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-bold text-brand-600 hover:text-brand-800 px-2">Aplicar</button>
+                        </div>
+                        
+                        <button onclick="alert('Checkout Iniciado!')" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-green-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 group">
+                            <span>Finalizar Compra</span>
+                            <i class="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                        
+                        <a href="index.html" class="block text-center text-sm font-bold text-gray-500 hover:text-brand-600 transition-colors py-2">
+                            Continuar Comprando
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Selos de Segurança -->
+                <div class="flex justify-center gap-4 grayscale opacity-60">
+                    <i class="ph-fill ph-shield-check text-2xl" title="Compra Segura"></i>
+                    <i class="ph-fill ph-lock text-2xl" title="Site Blindado"></i>
+                    <i class="ph-fill ph-credit-card text-2xl" title="Pagamento Protegido"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Seção: Aproveite e Leve Também (Cross-selling) -->
+        <section id="related-products" class="border-t border-gray-200 pt-12">
+            <div class="flex items-center gap-2 mb-6">
+                <i class="ph-fill ph-sparkle text-brand-500 text-xl"></i>
+                <h2 class="text-xl font-bold text-gray-900">Aproveite e leve também</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="related-grid">
+                <!-- Gerado via JS -->
+            </div>
+        </section>
+        
+    </main>
+    
+    <script>
+        // Carrega o carrinho do localStorage
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let shippingValue = 0;
+        
+        function init() {
+            // SIMULAÇÃO: Adiciona itens automaticamente se estiver vazio para demonstração
+            if (cart.length === 0) {
+                cart = [
+                {
+                    id: 1,
+                    name: "Cimento CP II-E-32 50kg Votorantim",
+                    category: "Cimento & Argamassa",
+                    price: 34.90,
+                    quantity: 10,
+                    stock: 50, // Estoque alto
+                    images: ["https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=200&h=200&fit=crop"]
+                },
+                {
+                    id: 2,
+                    name: "Furadeira Parafusadeira Impacto 12V",
+                    category: "Ferramentas",
+                    price: 289.90,
+                    quantity: 1,
+                    stock: 3, // Estoque baixo!
+                    images: ["https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=200&h=200&fit=crop"]
+                },
+                {
+                    id: 3,
+                    name: "Tinta Acrílica Fosca Premium Branco 18L",
+                    category: "Tintas",
+                    price: 429.90,
+                    quantity: 1,
+                    stock: 2, // Estoque baixo!
+                    images: ["https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=200&h=200&fit=crop"]
+                }
+                ];
+                saveCart();
+            }
+            
+            renderCart();
+            renderRelatedProducts();
+            updateSummary();
+        }
+        
+        function saveCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            renderCart();
+            updateSummary();
+        }
+        
+        function updateQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.quantity += delta;
+                if (item.quantity <= 0) removeItem(id);
+                else saveCart();
+            }
+        }
+        
+        function removeItem(id) {
+            if(confirm('Deseja remover este item do carrinho?')) {
+                cart = cart.filter(i => i.id !== id);
+                saveCart();
+                if (cart.length === 0) {
+                    document.getElementById('related-products').classList.add('hidden');
+                }
+            }
+        }
+        
+        // --- Lógica do Popup Flutuante Aprimorada ---
+        function showProductPopup(event, id) {
+            const item = cart.find(i => i.id === id);
+            if (!item) return;
+            
+            const popup = document.getElementById('product-hover-popup');
+            const img = document.getElementById('popup-img');
+            const title = document.getElementById('popup-title');
+            const category = document.getElementById('popup-category');
+            const price = document.getElementById('popup-price');
+            const oldPrice = document.getElementById('popup-old-price');
+            const stock = document.getElementById('popup-stock');
+            const badge = document.getElementById('popup-badge');
+            const starsContainer = document.getElementById('popup-stars');
+            
+            // Preencher dados básicos
+            img.src = item.images[0];
+            title.textContent = item.name;
+            category.textContent = item.category || 'Material';
+            price.textContent = `R$ ${item.price.toFixed(2).replace('.', ',')}`;
+            
+            // Simulação de preço antigo
+            if(item.id % 2 === 0) {
+                oldPrice.textContent = `R$ ${(item.price * 1.1).toFixed(2).replace('.', ',')}`;
+                oldPrice.classList.remove('hidden');
+                badge.classList.remove('hidden');
+            } else {
+                oldPrice.classList.add('hidden');
+                badge.classList.add('hidden');
+            }
+            
+            // Estoque
+            if (item.stock < 5) {
+                stock.textContent = 'Poucas unidades';
+                stock.className = "text-[10px] px-2 py-1 rounded-full font-bold bg-amber-100 text-amber-700";
+            } else {
+                stock.textContent = 'Em Estoque';
+                stock.className = "text-[10px] px-2 py-1 rounded-full font-bold bg-green-100 text-green-700";
+            }
+            
+            // Estrelas Fixas (Simulação)
+            starsContainer.innerHTML = Array(5).fill(0).map((_, i) => i < 4 ? '<i class="ph-fill ph-star"></i>' : '<i class="ph-fill ph-star text-gray-200"></i>').join('');
+            
+            // Exibir e Posicionar (Seguindo o Mouse)
+            popup.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                popup.classList.remove('opacity-0', 'scale-95');
+            });
+            
+            // Atualiza posição inicial
+            movePopup(event);
+        }
+        
+        function movePopup(event) {
+            const popup = document.getElementById('product-hover-popup');
+            if (popup.classList.contains('hidden')) return;
+            
+            const popupWidth = popup.offsetWidth;
+            const popupHeight = popup.offsetHeight;
+            const gap = 20;
+            
+            let left = event.clientX + gap;
+            let top = event.clientY + gap;
+            
+            // Se sair pela direita, joga para esquerda
+            if (left + popupWidth > window.innerWidth) {
+                left = event.clientX - popupWidth - gap;
+            }
+            
+            // Se sair por baixo, joga para cima
+            if (top + popupHeight > window.innerHeight) {
+                top = event.clientY - popupHeight - gap;
+            }
+            
+            popup.style.left = `${left}px`;
+            popup.style.top = `${top}px`;
+        }
+        
+        function hideProductPopup() {
+            const popup = document.getElementById('product-hover-popup');
+            popup.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => {
+                popup.classList.add('hidden');
+            }, 200);
+        }
+        
+        function renderCart() {
+            const container = document.getElementById('cart-items-container');
+            const emptyState = document.getElementById('empty-cart');
+            const content = document.getElementById('cart-content');
+            const relatedSection = document.getElementById('related-products');
+            
+            if (cart.length === 0) {
+                content.classList.add('hidden');
+                relatedSection.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+                return;
+            }
+            
+            emptyState.classList.add('hidden');
+            emptyState.classList.remove('flex');
+            content.classList.remove('hidden');
+            relatedSection.classList.remove('hidden');
+            
+            container.innerHTML = cart.map(item => {
+                const lowStock = (item.stock && item.stock < 5) ? true : false;
+                const stockBadge = lowStock 
+                ? `<span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 w-fit mt-1"><i class="ph-bold ph-warning"></i> Últimas unidades</span>` 
+                : '';
+                
+                // APLICAÇÃO DO GATILHO RESTRITA (Imagem + Info Texto)
+                return `
+                <div class="p-6 flex flex-col md:grid md:grid-cols-12 gap-6 items-center group relative border-b border-gray-50 last:border-0">
+                    
+                    <!-- Container de Info (Gatilho do Popup) -->
+                    <div class="flex items-center gap-4 w-full md:col-span-6 cursor-help transition-colors hover:bg-gray-50/50 rounded-lg p-2 -ml-2"
+                         onmouseenter="showProductPopup(event, ${item.id})"
+                         onmousemove="movePopup(event)"
+                         onmouseleave="hideProductPopup()">
+                         
+                        <div class="w-20 h-20 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden flex-shrink-0">
+                            <img src="${item.images[0]}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-0.5">${item.category?.split(' ')[0] || 'Material'}</p>
+                            <h4 class="font-bold text-gray-800 text-sm md:text-base truncate" title="${item.name}">${item.name}</h4>
+                            ${stockBadge}
+                            <p class="text-xs text-gray-400 mt-1">Ref: ${item.id.toString().padStart(4, '0')}</p>
+                            <button onclick="event.stopPropagation(); removeItem(${item.id})" class="text-xs text-red-500 hover:text-red-700 font-medium mt-2 flex items-center gap-1 md:hidden"><i class="ph-bold ph-trash"></i> Remover</button>
+                        </div>
+                    </div>
+
+                    <!-- Controles e Preço (Sem Popup) -->
+                    <div class="flex justify-between items-center w-full md:contents">
+                        <div class="md:col-span-2 flex justify-center">
+                            <div class="flex items-center border border-gray-200 rounded-lg bg-gray-50 h-9">
+                                <button onclick="updateQty(${item.id}, -1)" class="w-8 h-full flex items-center justify-center text-gray-500 hover:text-brand-600 hover:bg-white rounded-l-lg transition-colors"><i class="ph-bold ph-minus text-xs"></i></button>
+                                <span class="w-8 text-center text-sm font-bold text-gray-800">${item.quantity}</span>
+                                <button onclick="updateQty(${item.id}, 1)" class="w-8 h-full flex items-center justify-center text-gray-500 hover:text-brand-600 hover:bg-white rounded-r-lg transition-colors"><i class="ph-bold ph-plus text-xs"></i></button>
+                            </div>
+                        </div>
+                        <div class="hidden md:block md:col-span-2 text-right text-sm text-gray-500">R$ ${item.price.toFixed(2).replace('.', ',')}</div>
+                        <div class="md:col-span-2 text-right">
+                            <div class="font-bold text-gray-900">R$ ${(item.price * item.quantity).toFixed(2).replace('.', ',')}</div>
+                            <button onclick="removeItem(${item.id})" class="hidden md:inline-flex text-[10px] text-gray-400 hover:text-red-500 mt-1 items-center gap-1 transition-colors"><i class="ph-fill ph-trash"></i> Remover</button>
+                        </div>
+                    </div>
+                </div>
+            `}).join('');
+            }
+            
+            // --- Frete Logic ---
+            function calcCartShipping() {
+                const zip = document.getElementById('cart-zip').value;
+                if(zip.length < 8) { alert('Digite um CEP válido'); return; }
+                document.getElementById('shipping-options').classList.remove('hidden');
+                document.getElementById('cep-input-group').classList.add('hidden');
+                document.getElementById('btn-change-cep').classList.remove('hidden');
+                updateShippingCost(15.90);
+            }
+            
+            function toggleCepEdit() {
+                document.getElementById('shipping-options').classList.add('hidden');
+                document.getElementById('cep-input-group').classList.remove('hidden');
+                document.getElementById('btn-change-cep').classList.add('hidden');
+                shippingValue = 0;
+                updateSummary();
+            }
+            
+            function updateShippingCost(val) {
+                shippingValue = val;
+                updateSummary();
+            }
+            
+            function updateSummary() {
+                const subtotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+                const discount = 0;
+                const total = subtotal + shippingValue - discount;
+                
+                document.getElementById('summary-subtotal').textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+                
+                const shippingEl = document.getElementById('summary-shipping');
+                if(shippingValue > 0) {
+                    shippingEl.textContent = `R$ ${shippingValue.toFixed(2).replace('.', ',')}`;
+                    shippingEl.className = "font-medium text-gray-800";
+                } else {
+                    shippingEl.textContent = "Calcular";
+                    shippingEl.className = "text-sm font-medium text-gray-500";
+                }
+                
+                document.getElementById('summary-total').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+            }
+            
+            // --- Produtos Relacionados Logic ---
+            function renderRelatedProducts() {
+                const related = [
+                { id: 101, name: "Kit Pincéis Pintura Profissional", category: "Tintas", price: 45.90, image: "https://images.unsplash.com/photo-1599692996922-38e4a9c777189?w=200&h=200&fit=crop" },
+                { id: 102, name: "Lâmpada LED 9W Branco Frio", category: "Iluminação", price: 12.50, image: "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?w=200&h=200&fit=crop" },
+                { id: 103, name: "Fita Isolante 20m 3M", category: "Elétrica", price: 8.90, image: "https://images.unsplash.com/photo-1616400619175-5beda3a17896?w=200&h=200&fit=crop" },
+                { id: 104, name: "Luva de Proteção Pigmentada", category: "EPI", price: 5.90, image: "https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=200&h=200&fit=crop" }
+                ];
+                
+                const container = document.getElementById('related-grid');
+                container.innerHTML = related.map(p => `
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all p-3 flex flex-col h-full group">
+                    <div class="relative w-full aspect-square bg-gray-50 rounded-lg overflow-hidden mb-3">
+                        <img src="${p.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                    </div>
+                    <div class="flex-1 flex flex-col">
+                        <span class="text-[10px] text-gray-400 uppercase font-bold">${p.category}</span>
+                        <h4 class="font-bold text-gray-800 text-sm leading-tight mb-2 line-clamp-2" title="${p.name}">${p.name}</h4>
+                        <div class="mt-auto flex items-center justify-between">
+                            <span class="font-bold text-brand-600">R$ ${p.price.toFixed(2).replace('.', ',')}</span>
+                            <button onclick="addRelatedToCart(${p.id}, '${p.name}', ${p.price}, '${p.image}')" class="bg-gray-100 text-gray-600 hover:bg-brand-600 hover:text-white p-2 rounded-lg transition-colors">
+                                <i class="ph-bold ph-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            }
+            
+            function addRelatedToCart(id, name, price, image) {
+                const existing = cart.find(i => i.id === id);
+                if(existing) {
+                    existing.quantity++;
+                } else {
+                    cart.push({
+                        id: id,
+                        name: name,
+                        price: price,
+                        quantity: 1,
+                        images: [image],
+                        category: "Outros",
+                        stock: 10
+                    });
+                }
+                saveCart();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            
+            init();
+        </script>
+    </body>
+    </html>

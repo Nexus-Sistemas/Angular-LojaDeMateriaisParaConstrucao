@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre Nós - ConstrutoraPro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { brand: { 50: '#fff7ed', 100: '#ffedd5', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 900: '#7c2d12' } },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+    <header class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-100">
+        <div class="container mx-auto px-4 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div class="bg-gradient-to-br from-brand-500 to-brand-600 text-white p-2 rounded-lg shadow-lg group-hover:scale-105 transition-transform"><i class="ph-bold ph-hammer text-2xl"></i></div>
+                <span class="text-2xl font-bold tracking-tight text-gray-900">Construtora<span class="text-brand-500">Pro</span></span>
+            </a>
+            <a href="index.html" class="text-sm font-bold text-gray-500 hover:text-brand-600 flex items-center gap-2 transition-colors">
+                <i class="ph-bold ph-arrow-left"></i> Voltar para a Loja
+            </a>
+        </div>
+    </header>
+
+    <main class="pt-20">
+        <!-- Hero Section -->
+        <div class="relative bg-gray-900 h-96 flex items-center justify-center text-center px-4">
+            <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?q=80&w=2000&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-30">
+            <div class="relative z-10 max-w-3xl">
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">Construindo Sonhos, <br>Entregando Qualidade.</h1>
+                <p class="text-lg text-gray-300">Há mais de 10 anos sendo a parceira ideal para reformas e construções em todo o Brasil.</p>
+            </div>
+        </div>
+
+        <!-- Nossa História -->
+        <div class="container mx-auto px-4 py-16">
+            <div class="flex flex-col md:flex-row gap-12 items-center">
+                <div class="md:w-1/2">
+                    <span class="text-brand-600 font-bold uppercase tracking-wider text-sm mb-2 block">Nossa História</span>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-6">De uma pequena loja a líder de mercado</h2>
+                    <div class="space-y-4 text-gray-600 leading-relaxed">
+                        <p>A ConstrutoraPro nasceu em 2013 com um objetivo simples: facilitar a vida de quem constrói ou reforma. O que começou como um pequeno depósito de materiais cresceu impulsionado pela nossa obsessão por qualidade e atendimento técnico especializado.</p>
+                        <p>Hoje, combinamos a expertise técnica de engenheiros com a agilidade do e-commerce para entregar não apenas cimento e tijolos, mas soluções completas para sua obra, do alicerce ao acabamento.</p>
+                    </div>
+                </div>
+                <div class="md:w-1/2 grid grid-cols-2 gap-4">
+                    <img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=500&q=80" class="rounded-2xl shadow-lg mt-8">
+                    <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=500&q=80" class="rounded-2xl shadow-lg mb-8">
+                </div>
+            </div>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="bg-brand-600 py-16">
+            <div class="container mx-auto px-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center text-white">
+                    <div>
+                        <div class="text-4xl font-extrabold mb-2">50k+</div>
+                        <div class="text-sm font-medium opacity-80">Clientes Satisfeitos</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-extrabold mb-2">15k+</div>
+                        <div class="text-sm font-medium opacity-80">Produtos no Catálogo</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-extrabold mb-2">24h</div>
+                        <div class="text-sm font-medium opacity-80">Envio Rápido</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-extrabold mb-2">4.9</div>
+                        <div class="text-sm font-medium opacity-80">Nota Média</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Valores -->
+        <div class="container mx-auto px-4 py-16">
+            <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">Nossos Pilares</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center hover:-translate-y-1 transition-transform duration-300">
+                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-6"><i class="ph-fill ph-shield-check"></i></div>
+                    <h3 class="font-bold text-xl text-gray-900 mb-3">Confiança</h3>
+                    <p class="text-gray-500">Trabalhamos apenas com marcas certificadas e garantimos a procedência de cada item vendido.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center hover:-translate-y-1 transition-transform duration-300">
+                    <div class="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-6"><i class="ph-fill ph-truck"></i></div>
+                    <h3 class="font-bold text-xl text-gray-900 mb-3">Agilidade</h3>
+                    <p class="text-gray-500">Sabemos que obra parada é prejuízo. Nossa logística é otimizada para entregas recordes.</p>
+                </div>
+                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center hover:-translate-y-1 transition-transform duration-300">
+                    <div class="w-16 h-16 bg-brand-50 text-brand-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-6"><i class="ph-fill ph-users-three"></i></div>
+                    <h3 class="font-bold text-xl text-gray-900 mb-3">Parceria</h3>
+                    <p class="text-gray-500">Nosso suporte técnico fala a sua língua, ajudando você a escolher o material certo.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-900 text-gray-400 py-12 text-center text-sm">
+        <div class="container mx-auto px-4">
+            <p>&copy; 2024 ConstrutoraPro. Feito para quem constrói o futuro.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Favoritos - ConstrutoraPro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { brand: { 50: '#fff7ed', 100: '#ffedd5', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 900: '#7c2d12' } },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: { 'fade-in': 'fadeIn 0.5s ease-out forwards' },
+                    keyframes: { fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } } }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 w-full bg-white shadow-sm z-50 border-b border-gray-100">
+        <div class="container mx-auto px-4 h-20 flex items-center justify-between gap-4">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div class="bg-gradient-to-br from-brand-500 to-brand-600 text-white p-2 rounded-lg shadow-lg"><i class="ph-bold ph-hammer text-2xl"></i></div>
+                <span class="text-2xl font-bold tracking-tight text-gray-900 hidden sm:block">Construtora<span class="text-brand-500">Pro</span></span>
+            </a>
+            <div class="flex items-center gap-6">
+                <a href="profile.html" class="text-sm font-bold text-gray-500 hover:text-brand-600 flex items-center gap-2">
+                    <i class="ph-bold ph-user"></i> Minha Conta
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 pt-28 pb-12 animate-fade-in min-h-screen">
+        
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-8 flex items-center gap-3">
+            <i class="ph-fill ph-heart text-red-500"></i> Meus Favoritos
+        </h1>
+
+        <!-- Lista de Favoritos (Grid) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            
+            <!-- Card 1 -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 relative group hover:shadow-lg transition-all">
+                <button class="absolute top-2 right-2 p-2 bg-white rounded-full text-red-500 hover:bg-red-50 transition-colors z-10 shadow-sm" title="Remover dos favoritos">
+                    <i class="ph-fill ph-trash"></i>
+                </button>
+                <div class="relative w-full aspect-square bg-gray-50 rounded-lg overflow-hidden mb-3">
+                    <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=300" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                </div>
+                <div>
+                    <span class="text-[10px] text-gray-400 uppercase font-bold">Cimento & Argamassa</span>
+                    <h3 class="font-bold text-gray-800 text-sm leading-tight mb-2 line-clamp-2">Argamassa Piso sobre Piso 20kg Quartzolit</h3>
+                    <div class="flex items-center justify-between mt-3">
+                        <span class="font-bold text-brand-600 text-lg">R$ 29,90</span>
+                        <button class="bg-gray-900 text-white p-2 rounded-lg hover:bg-brand-600 transition-colors"><i class="ph-bold ph-shopping-cart"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 relative group hover:shadow-lg transition-all">
+                <button class="absolute top-2 right-2 p-2 bg-white rounded-full text-red-500 hover:bg-red-50 transition-colors z-10 shadow-sm">
+                    <i class="ph-fill ph-trash"></i>
+                </button>
+                <div class="relative w-full aspect-square bg-gray-50 rounded-lg overflow-hidden mb-3">
+                    <img src="https://images.unsplash.com/photo-1581244277943-fe4a9c777189?w=300" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                </div>
+                <div>
+                    <span class="text-[10px] text-gray-400 uppercase font-bold">Ferramentas</span>
+                    <h3 class="font-bold text-gray-800 text-sm leading-tight mb-2 line-clamp-2">Serra Mármore 1300W Bosch Profissional</h3>
+                    <div class="flex items-center justify-between mt-3">
+                        <span class="font-bold text-brand-600 text-lg">R$ 459,00</span>
+                        <button class="bg-gray-900 text-white p-2 rounded-lg hover:bg-brand-600 transition-colors"><i class="ph-bold ph-shopping-cart"></i></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+</body>
+</html>

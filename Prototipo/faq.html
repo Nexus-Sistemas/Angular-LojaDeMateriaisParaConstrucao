@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajuda e FAQ - ConstrutoraPro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { brand: { 50: '#fff7ed', 100: '#ffedd5', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 900: '#7c2d12' } },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        .accordion-content { transition: max-height 0.3s ease-out, opacity 0.3s ease-out; max-height: 0; opacity: 0; overflow: hidden; }
+        .accordion-content.active { max-height: 500px; opacity: 1; }
+        .accordion-icon { transition: transform 0.3s ease; }
+        .accordion-btn[aria-expanded="true"] .accordion-icon { transform: rotate(180deg); }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+    <header class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-md shadow-sm z-50 border-b border-gray-100">
+        <div class="container mx-auto px-4 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div class="bg-gradient-to-br from-brand-500 to-brand-600 text-white p-2 rounded-lg shadow-lg group-hover:scale-105 transition-transform"><i class="ph-bold ph-hammer text-2xl"></i></div>
+                <span class="text-2xl font-bold tracking-tight text-gray-900">Construtora<span class="text-brand-500">Pro</span></span>
+            </a>
+            <a href="index.html" class="text-sm font-bold text-gray-500 hover:text-brand-600 flex items-center gap-2 transition-colors">
+                <i class="ph-bold ph-arrow-left"></i> Voltar
+            </a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 pt-32 pb-16 min-h-screen max-w-3xl">
+        
+        <div class="text-center mb-12">
+            <h1 class="text-3xl font-bold text-gray-900 mb-4">Como podemos ajudar?</h1>
+            <div class="relative max-w-lg mx-auto">
+                <input type="text" placeholder="Digite sua dúvida (ex: prazo de entrega, troca...)" class="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 shadow-sm focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-gray-700">
+                <i class="ph-bold ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl"></i>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            
+            <!-- Tópico 1 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <button class="accordion-btn w-full px-6 py-5 flex items-center justify-between bg-white hover:bg-gray-50 transition-colors text-left" onclick="toggleAccordion(this)">
+                    <span class="font-bold text-gray-800">Qual o prazo de entrega?</span>
+                    <i class="ph-bold ph-caret-down text-gray-400 accordion-icon"></i>
+                </button>
+                <div class="accordion-content bg-gray-50 border-t border-gray-100">
+                    <p class="px-6 py-4 text-sm text-gray-600 leading-relaxed">
+                        O prazo de entrega varia de acordo com o seu CEP e a modalidade de frete escolhida (Econômica ou Expressa). Você pode consultar o prazo exato na página do produto ou no carrinho de compras antes de finalizar o pedido.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tópico 2 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <button class="accordion-btn w-full px-6 py-5 flex items-center justify-between bg-white hover:bg-gray-50 transition-colors text-left" onclick="toggleAccordion(this)">
+                    <span class="font-bold text-gray-800">Quais as formas de pagamento aceitas?</span>
+                    <i class="ph-bold ph-caret-down text-gray-400 accordion-icon"></i>
+                </button>
+                <div class="accordion-content bg-gray-50 border-t border-gray-100">
+                    <p class="px-6 py-4 text-sm text-gray-600 leading-relaxed">
+                        Aceitamos cartão de crédito (em até 10x sem juros), boleto bancário e Pix com 5% de desconto. Pagamentos via Pix têm aprovação imediata.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tópico 3 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <button class="accordion-btn w-full px-6 py-5 flex items-center justify-between bg-white hover:bg-gray-50 transition-colors text-left" onclick="toggleAccordion(this)">
+                    <span class="font-bold text-gray-800">Como funciona a política de trocas?</span>
+                    <i class="ph-bold ph-caret-down text-gray-400 accordion-icon"></i>
+                </button>
+                <div class="accordion-content bg-gray-50 border-t border-gray-100">
+                    <p class="px-6 py-4 text-sm text-gray-600 leading-relaxed">
+                        Você tem até 7 dias corridos após o recebimento para solicitar a troca ou devolução por arrependimento. Em casos de defeito, o prazo é de 30 dias para bens não duráveis e 90 dias para bens duráveis. Entre em contato pelo nosso chat para iniciar o processo.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tópico 4 -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <button class="accordion-btn w-full px-6 py-5 flex items-center justify-between bg-white hover:bg-gray-50 transition-colors text-left" onclick="toggleAccordion(this)">
+                    <span class="font-bold text-gray-800">Os produtos possuem garantia?</span>
+                    <i class="ph-bold ph-caret-down text-gray-400 accordion-icon"></i>
+                </button>
+                <div class="accordion-content bg-gray-50 border-t border-gray-100">
+                    <p class="px-6 py-4 text-sm text-gray-600 leading-relaxed">
+                        Sim! Todos os nossos produtos possuem garantia legal. Além disso, muitos itens como ferramentas elétricas possuem garantia estendida direto com o fabricante, que pode variar de 6 meses a 3 anos. Verifique a descrição técnica de cada item.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mt-12 text-center">
+            <p class="text-gray-500 mb-4">Não encontrou o que procurava?</p>
+            <button class="bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-brand-500/20 transition-all inline-flex items-center gap-2">
+                <i class="ph-bold ph-whatsapp-logo"></i> Falar com Atendente
+            </button>
+        </div>
+
+    </main>
+
+    <footer class="py-8 text-center text-xs text-gray-400 border-t border-gray-100">
+        &copy; 2024 ConstrutoraPro. Todos os direitos reservados.
+    </footer>
+
+    <script>
+        function toggleAccordion(btn) {
+            const content = btn.nextElementSibling;
+            const isExpanded = btn.getAttribute('aria-expanded') === 'true';
+            
+            // Fecha todos
+            document.querySelectorAll('.accordion-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.accordion-btn').forEach(b => b.setAttribute('aria-expanded', 'false'));
+
+            if (!isExpanded) {
+                content.classList.add('active');
+                btn.setAttribute('aria-expanded', 'true');
+            }
+        }
+    </script>
+</body>
+</html>

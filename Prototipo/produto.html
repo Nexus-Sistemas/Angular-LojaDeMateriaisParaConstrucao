@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Produto - ConstrutoraPro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { brand: { 50: '#fff7ed', 100: '#ffedd5', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 900: '#7c2d12' } },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: { 'fade-in': 'fadeIn 0.5s ease-out forwards' },
+                    keyframes: { fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } } }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .tab-active { border-bottom: 2px solid #ea580c; color: #ea580c; font-weight: 700; }
+        .tab-inactive { border-bottom: 2px solid transparent; color: #6b7280; }
+        .tab-inactive:hover { color: #374151; border-bottom: 2px solid #e5e7eb; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 w-full bg-white shadow-sm z-50 border-b border-gray-100">
+        <div class="container mx-auto px-4 h-20 flex items-center justify-between gap-4">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div class="bg-gradient-to-br from-brand-500 to-brand-600 text-white p-2 rounded-lg shadow-lg group-hover:scale-105 transition-transform"><i class="ph-bold ph-hammer text-2xl"></i></div>
+                <span class="text-2xl font-bold tracking-tight text-gray-900 hidden sm:block">Construtora<span class="text-brand-500">Pro</span></span>
+            </a>
+            <div class="flex-1 max-w-xl mx-auto hidden md:block">
+                <div class="relative group">
+                    <input type="text" placeholder="Buscar produtos..." class="w-full bg-gray-100 border-none rounded-full py-2.5 pl-12 pr-4 focus:ring-2 focus:ring-brand-500 transition-all">
+                    <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg group-focus-within:text-brand-500 transition-colors"></i>
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="relative group cursor-pointer py-2" id="cart-container">
+                    <div class="relative p-2 hover:bg-gray-100 rounded-full transition-colors">
+                        <i class="ph ph-shopping-cart text-2xl text-gray-700 hover:text-brand-600 transition-colors"></i>
+                        <span id="cart-badge" class="absolute top-0 right-0 bg-brand-600 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full scale-0 transition-transform shadow-sm border border-white">0</span>
+                    </div>
+                    <!-- Popup Carrinho -->
+                    <div class="absolute right-0 top-full w-80 bg-white rounded-2xl shadow-xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right p-4 z-50">
+                        <h3 class="font-bold border-b pb-2 mb-2 text-sm text-gray-700">Seu Carrinho</h3>
+                        <div id="mini-cart-items" class="max-h-48 overflow-y-auto text-sm space-y-3"></div>
+                        <div class="pt-3 mt-2 border-t border-dashed border-gray-200">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-sm text-gray-500">Total:</span> 
+                                <span id="cart-total" class="text-lg font-bold text-brand-600">R$ 0,00</span>
+                            </div>
+                            <button class="w-full bg-gray-900 text-white font-bold py-2 rounded-lg hover:bg-brand-600 transition-colors text-sm">Ir para o Pagamento</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden sm:flex items-center gap-3 pl-4 border-l border-gray-200">
+                    <div class="text-right">
+                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Bem-vindo</p>
+                        <p class="text-sm font-bold text-gray-800">Minha Conta</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden border-2 border-white shadow-sm hover:border-brand-200 transition-colors"><img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 pt-28 pb-12 animate-fade-in">
+        
+        <!-- Navegação Breadcrumb -->
+        <nav class="flex text-sm text-gray-500 mb-6 overflow-x-auto whitespace-nowrap pb-2">
+            <a href="index.html" class="hover:text-brand-600 transition-colors flex items-center gap-1"><i class="ph-fill ph-house"></i> Home</a>
+            <span class="mx-2 text-gray-300">/</span>
+            <a href="#" class="hover:text-brand-600 transition-colors" id="breadcrumb-category">Categoria</a>
+            <span class="mx-2 text-gray-300">/</span>
+            <span class="text-gray-900 font-medium truncate" id="breadcrumb-product">Produto</span>
+        </nav>
+
+        <!-- Seção Principal do Produto -->
+        <div class="bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-gray-100 flex flex-col lg:flex-row gap-10">
+            
+            <!-- Coluna Esquerda: Galeria de Imagens com Zoom -->
+            <div class="w-full lg:w-3/5 xl:w-1/2 flex flex-col gap-4">
+                <!-- Container da Imagem com ID para o Zoom -->
+                <div id="zoom-container" class="relative w-full aspect-[4/3] sm:aspect-square md:aspect-[4/3] lg:aspect-square bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 group cursor-zoom-in">
+                    <img id="main-image" src="" class="w-full h-full object-cover transition-transform duration-200 ease-out origin-center" alt="Imagem do Produto">
+                    
+                    <div class="absolute top-4 left-4 flex flex-col gap-2 pointer-events-none">
+                        <span class="bg-brand-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md hidden" id="badge-discount">OFERTA</span>
+                        <span class="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md hidden" id="badge-shipping">FRETE GRÁTIS</span>
+                    </div>
+                    <button class="absolute top-4 right-4 bg-white/90 hover:bg-white text-gray-400 hover:text-red-500 p-2 rounded-full shadow-sm backdrop-blur-sm transition-all z-10"><i class="ph-fill ph-heart text-xl"></i></button>
+                </div>
+                
+                <div class="grid grid-cols-5 gap-3" id="thumbnails">
+                    <!-- Miniaturas JS -->
+                </div>
+            </div>
+
+            <!-- Coluna Direita: Informações de Compra -->
+            <div class="w-full lg:w-2/5 xl:w-1/2 flex flex-col">
+                <div class="mb-6 border-b border-gray-100 pb-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <span id="brand" class="text-xs font-bold text-brand-600 bg-brand-50 px-2 py-1 rounded uppercase tracking-wider">Marca</span>
+                        <span class="text-xs text-gray-400">Ref: <span id="ref-id">0000</span></span>
+                    </div>
+                    <h1 id="title" class="text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-900 leading-tight mb-3">Carregando Produto...</h1>
+                    
+                    <div class="flex flex-wrap items-center gap-4 text-sm">
+                        <div class="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded-lg border border-yellow-100">
+                            <!-- Estrelas dinâmicas do Header -->
+                            <div class="flex items-center text-lg gap-0.5" id="rating"></div>
+                            <span class="font-bold text-gray-700 ml-1" id="rating-number-header">4.8</span>
+                            <span class="text-gray-400 text-xs">(120 avaliações)</span>
+                        </div>
+                        <span id="stock-status" class="flex items-center gap-1.5 font-medium px-2 py-1 rounded-lg"></span>
+                    </div>
+                </div>
+
+                <!-- Preço e Parcelamento -->
+                <div class="mb-8">
+                    <div class="flex items-baseline gap-3 flex-wrap">
+                        <span class="text- gray-400 line-through text-lg" id="old-price"></span>
+                        <span class="text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight" id="price">R$ 0,00</span>
+                        <span class="text-green-600 bg-green-50 px-2 py-1 rounded text-xs font-bold self-start mt-2 hidden" id="discount-percent">0% OFF</span>
+                    </div>
+                    <p class="text-gray-500 text-sm mt-2 flex items-center gap-2">
+                        <i class="ph-fill ph-credit-card text-brand-500"></i>
+                        Até <span class="font-bold text-gray-900">10x sem juros</span> no cartão
+                    </p>
+                    <p class="text-brand-700 text-sm mt-1 bg-brand-50 w-fit px-2 py-0.5 rounded font-medium">5% de desconto no Pix</p>
+                </div>
+
+                <!-- Ações -->
+                <div class="flex flex-col sm:flex-row gap-4 mb-8">
+                    <div class="flex items-center border-2 border-gray-200 rounded-xl bg-white w-fit hover:border-gray-300 transition-colors">
+                        <button class="w-12 h-12 flex items-center justify-center text-gray-500 hover:text-brand-600 transition-colors" onclick="updateQty(-1)"><i class="ph-bold ph-minus"></i></button>
+                        <input type="number" id="qty" value="1" readonly class="w-10 text-center font-bold text-lg text-gray-900 outline-none border-none p-0 bg-transparent">
+                        <button class="w-12 h-12 flex items-center justify-center text-gray-500 hover:text-brand-600 transition-colors" onclick="updateQty(1)"><i class="ph-bold ph-plus"></i></button>
+                    </div>
+                    <button id="btn-add" class="flex-1 bg-gray-900 hover:bg-brand-600 text-white font-bold h-14 rounded-xl shadow-lg shadow-gray-200 hover:shadow-brand-200 transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 text-lg">
+                        <i class="ph-bold ph-shopping-cart text-2xl"></i>
+                        <span>Adicionar ao Carrinho</span>
+                    </button>
+                </div>
+
+                <!-- Calculadora de Frete -->
+                <div class="bg-gray-50 rounded-2xl p-5 border border-gray-200">
+                    <h3 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+                        <i class="ph-fill ph-truck text-brand-500"></i> Calcular Frete e Prazo
+                    </h3>
+                    <div class="flex gap-2 mb-4">
+                        <input type="text" id="zip-code" placeholder="00000-000" maxlength="9" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none">
+                        <button onclick="calculateShipping()" class="bg-white border border-gray-300 text-gray-700 font-bold px-4 py-2 rounded-lg text-sm hover:bg-gray-100 transition-colors">Calcular</button>
+                    </div>
+                    <div id="shipping-results" class="hidden space-y-2">
+                        <!-- Resultados JS -->
+                    </div>
+                    <a href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank" class="text-xs text-brand-600 hover:underline">Não sei meu CEP</a>
+                </div>
+
+                <!-- Garantia/Infos Rápidas -->
+                <div class="grid grid-cols-2 gap-4 mt-6">
+                    <div class="flex items-start gap-3">
+                        <div class="bg-blue-50 text-blue-600 p-2 rounded-lg"><i class="ph-fill ph-shield-check text-xl"></i></div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-900">Garantia de 1 Ano</p>
+                            <p class="text-[10px] text-gray-500">Direto com fabricante</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="bg-purple-50 text-purple-600 p-2 rounded-lg"><i class="ph-fill ph-arrow-u-up-left text-xl"></i></div>
+                        <div>
+                            <p class="text-xs font-bold text-gray-900">Troca Grátis</p>
+                            <p class="text-[10px] text-gray-500">Até 7 dias após recebimento</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção de Abas -->
+        <div class="mt-12">
+            <div class="flex border-b border-gray-200 mb-8 overflow-x-auto scrollbar-hide">
+                <button onclick="switchTab('overview')" id="tab-overview" class="tab-active px-6 py-4 text-sm font-medium transition-colors whitespace-nowrap">Visão Geral</button>
+                <button onclick="switchTab('specs')" id="tab-specs" class="tab-inactive px-6 py-4 text-sm font-medium transition-colors whitespace-nowrap">Especificações Técnicas</button>
+                <button onclick="switchTab('reviews')" id="tab-reviews" class="tab-inactive px-6 py-4 text-sm font-medium transition-colors whitespace-nowrap">Avaliações (120)</button>
+            </div>
+
+            <div id="content-overview" class="animate-fade-in">
+                <div class="max-w-4xl mx-auto space-y-16">
+                    <div class="flex flex-col md:flex-row items-center gap-10">
+                        <div class="md:w-1/2">
+                            <h2 class="text-2xl font-bold text-gray-900 mb-4">Qualidade Superior para Sua Obra</h2>
+                            <p class="text-gray-600 leading-relaxed">Este produto foi desenvolvido pensando na máxima eficiência e durabilidade...</p>
+                            <ul class="mt-6 space-y-2">
+                                <li class="flex items-center gap-2 text-sm text-gray-700"><i class="ph-fill ph-check-circle text-green-500"></i> Alta resistência mecânica</li>
+                                <li class="flex items-center gap-2 text-sm text-gray-700"><i class="ph-fill ph-check-circle text-green-500"></i> Acabamento premium</li>
+                            </ul>
+                        </div>
+                        <div class="md:w-1/2"><img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=800&q=80" class="rounded-2xl shadow-lg w-full h-64 object-cover"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-specs" class="hidden animate-fade-in">
+                <div class="max-w-3xl mx-auto bg-white rounded-2xl border border-gray-200 overflow-hidden">
+                    <table class="w-full text-sm text-left text-gray-600"><tbody class="divide-y divide-gray-100" id="specs-table-body"></tbody></table>
+                </div>
+            </div>
+
+            <!-- Área de Avaliações -->
+            <div id="content-reviews" class="hidden animate-fade-in">
+                <div class="max-w-5xl mx-auto flex flex-col md:flex-row gap-10">
+                    <div class="md:w-1/3">
+                        <div class="bg-gray-50 rounded-2xl p-6 border border-gray-100 text-center sticky top-24">
+                            <h3 class="text-lg font-bold text-gray-900 mb-2">Média dos Clientes</h3>
+                            
+                            <!-- Nota Grande Dinâmica -->
+                            <div class="text-5xl font-extrabold text-gray-900 mb-2" id="summary-rating-number">0.0</div>
+                            
+                            <!-- Estrelas Dinâmicas no Resumo -->
+                            <div class="flex justify-center text-xl mb-4 gap-1" id="summary-rating-stars">
+                                <!-- JS Injeta aqui -->
+                            </div>
+                            
+                            <p class="text-sm text-gray-500 mb-6">Baseado em 120 avaliações</p>
+                            
+                            <div class="space-y-2 text-xs text-gray-600">
+                                <div class="flex items-center gap-2"><span class="w-8">5 <i class="ph-fill ph-star text-yellow-400"></i></span><div class="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden"><div class="bg-yellow-400 h-full rounded-full" style="width: 80%"></div></div><span class="w-8 text-right">80%</span></div>
+                                <div class="flex items-center gap-2"><span class="w-8">4 <i class="ph-fill ph-star text-yellow-400"></i></span><div class="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden"><div class="bg-yellow-400 h-full rounded-full" style="width: 15%"></div></div><span class="w-8 text-right">15%</span></div>
+                                <div class="flex items-center gap-2"><span class="w-8">3 <i class="ph-fill ph-star text-yellow-400"></i></span><div class="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden"><div class="bg-yellow-400 h-full rounded-full" style="width: 3%"></div></div><span class="w-8 text-right">3%</span></div>
+                                <div class="flex items-center gap-2"><span class="w-8">2 <i class="ph-fill ph-star text-yellow-400"></i></span><div class="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden"><div class="bg-yellow-400 h-full rounded-full" style="width: 1%"></div></div><span class="w-8 text-right">1%</span></div>
+                                <div class="flex items-center gap-2"><span class="w-8">1 <i class="ph-fill ph-star text-yellow-400"></i></span><div class="flex-1 bg-gray-200 rounded-full h-2 overflow-hidden"><div class="bg-yellow-400 h-full rounded-full" style="width: 1%"></div></div><span class="w-8 text-right">1%</span></div>
+                            </div>
+                            <button class="w-full mt-6 border border-gray-300 text-gray-700 font-bold py-2 rounded-lg hover:bg-white transition-colors">Escrever Avaliação</button>
+                        </div>
+                    </div>
+                    <div class="md:w-2/3 space-y-6" id="reviews-list"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="toast" class="fixed bottom-6 right-6 bg-gray-900 text-white pl-4 pr-6 py-4 rounded-xl shadow-2xl transform translate-y-32 transition-transform duration-500 flex items-center gap-4 z-50 border border-gray-700/50 backdrop-blur-md">
+        <div class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg"><i class="ph-bold ph-check text-lg"></i></div>
+        <div><h4 class="font-bold text-sm">Adicionado!</h4><p class="text-xs text-gray-400 mt-0.5">Produto no carrinho.</p></div>
+    </div>
+
+    <script>
+        const categories = ["Cimento & Argamassa", "Pisos & Revestimentos", "Ferramentas", "Elétrica", "Hidráulica", "Tintas", "Iluminação"];
+        
+        function getProductData(id) {
+            const seed = id * 9301 + 49297;
+            const catIndex = seed % categories.length;
+            const price = (seed % 500) + 20;
+            // Define uma nota com decimais para testar as estrelas
+            const preciseRating = ((id % 20) / 10 + 3); 
+            // Exemplo: se id=1 -> 3.1, se id=18 -> 4.8
+            
+            return {
+                id: id,
+                name: `Produto Premium Tipo ${String.fromCharCode(65 + (id % 5))} - ${id}`,
+                category: categories[catIndex],
+                brand: ["Votorantim", "Suvinil", "Tigre", "Bosch", "Amanco"][id % 5],
+                price: price,
+                discount: (id % 3 === 0) ? 10 : 0,
+                rating: preciseRating, 
+                images: [`https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&auto=format&fit=crop&q=80&random=${id}`, `https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&auto=format&fit=crop&q=80&random=${id+100}`],
+                inStock: (id % 5 !== 0),
+                specs: [{ label: "Modelo", value: `PRO-${id}X` }, { label: "Peso", value: `${(id % 10) + 1} kg` }, { label: "Material", value: "Aço Inoxidável" }, { label: "Garantia", value: "12 meses" }],
+                reviews: [
+                    { user: "Carlos S.", date: "10/10/2023", rating: 5, text: "Excelente!" },
+                    { user: "Fernanda M.", date: "05/09/2023", rating: 4, text: "Muito bom." }
+                ]
+            };
+        }
+
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let product = null;
+        let qty = 1;
+
+        function init() {
+            const params = new URLSearchParams(window.location.search);
+            const id = parseInt(params.get('id')) || 18; // Usa 18 para testar a nota 4.8
+            
+            if (!id) return;
+
+            product = getProductData(id);
+            renderProduct();
+            updateCartUI();
+            setupZoom();
+        }
+
+        // Função mágica para renderizar estrelas fracionadas
+        function renderStars(rating) {
+            let starsHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                if (rating >= i) {
+                    // Estrela cheia
+                    starsHtml += '<div class="text-yellow-400"><i class="ph-fill ph-star"></i></div>';
+                } else if (rating > i - 1) {
+                    // Estrela parcial
+                    const percentage = Math.round((rating - (i - 1)) * 100);
+                    starsHtml += `
+                        <div class="relative inline-block text-gray-300">
+                            <i class="ph-fill ph-star"></i>
+                            <div class="absolute top-0 left-0 overflow-hidden text-yellow-400" style="width: ${percentage}%">
+                                <i class="ph-fill ph-star"></i>
+                            </div>
+                        </div>`;
+                } else {
+                    // Estrela vazia
+                    starsHtml += '<div class="text-gray-300"><i class="ph-fill ph-star"></i></div>';
+                }
+            }
+            return starsHtml;
+        }
+
+        function setupZoom() {
+            const container = document.getElementById('zoom-container');
+            const img = document.getElementById('main-image');
+            if (container && img) {
+                container.addEventListener('mousemove', function(e) {
+                    const { left, top, width, height } = container.getBoundingClientRect();
+                    const x = ((e.clientX - left) / width) * 100;
+                    const y = ((e.clientY - top) / height) * 100;
+                    img.style.transformOrigin = `${x}% ${y}%`;
+                    img.style.transform = 'scale(2)';
+                });
+                container.addEventListener('mouseleave', function() {
+                    img.style.transformOrigin = 'center center';
+                    img.style.transform = 'scale(1)';
+                });
+            }
+        }
+
+        function renderProduct() {
+            document.getElementById('title').textContent = product.name;
+            document.getElementById('brand').textContent = product.brand;
+            document.getElementById('breadcrumb-category').textContent = product.category;
+            document.getElementById('breadcrumb-product').textContent = product.name;
+            document.getElementById('ref-id').textContent = product.id.toString().padStart(4, '0');
+            
+            const mainImg = document.getElementById('main-image');
+            mainImg.src = product.images[0];
+            document.getElementById('thumbnails').innerHTML = product.images.map(img => `<div class="aspect-square rounded-lg overflow-hidden border-2 border-transparent hover:border-brand-500 cursor-pointer transition-all" onclick="document.getElementById('main-image').src='${img}'"><img src="${img}" class="w-full h-full object-cover"></div>`).join('');
+
+            const finalPrice = product.discount > 0 ? product.price * (1 - product.discount/100) : product.price;
+            document.getElementById('price').textContent = `R$ ${finalPrice.toFixed(2).replace('.', ',')}`;
+            
+            if (product.discount > 0) {
+                document.getElementById('old-price').textContent = `R$ ${product.price.toFixed(2).replace('.', ',')}`;
+                document.getElementById('old-price').classList.remove('hidden');
+                document.getElementById('discount-percent').textContent = `${product.discount}% OFF`;
+                document.getElementById('discount-percent').classList.remove('hidden');
+                document.getElementById('badge-discount').classList.remove('hidden');
+            }
+
+            const stockEl = document.getElementById('stock-status');
+            const btn = document.getElementById('btn-add');
+            if (product.inStock) {
+                stockEl.innerHTML = '<i class="ph-fill ph-check-circle text-green-500"></i> <span class="text-green-700">Disponível</span>';
+                stockEl.className = "flex items-center gap-1.5 font-bold px-3 py-1 rounded-full bg-green-50 border border-green-100 text-xs";
+                btn.onclick = () => addToCart();
+            } else {
+                stockEl.innerHTML = '<i class="ph-fill ph-x-circle text-red-500"></i> <span class="text-red-700">Indisponível</span>';
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'cursor-not-allowed', 'bg-gray-400');
+                btn.innerHTML = "Sem Estoque";
+            }
+
+            // --- Renderização de Estrelas Inteligente ---
+            const starsHTML = renderStars(product.rating);
+            const formattedRating = product.rating.toFixed(1);
+
+            // 1. Atualiza no Header
+            document.getElementById('rating').innerHTML = starsHTML;
+            document.getElementById('rating-number-header').textContent = formattedRating;
+
+            // 2. Atualiza no Resumo de Avaliações
+            document.getElementById('summary-rating-number').textContent = formattedRating;
+            document.getElementById('summary-rating-stars').innerHTML = starsHTML;
+
+            const specsBody = document.getElementById('specs-table-body');
+            specsBody.innerHTML = product.specs.map((spec, i) => `<tr class="${i % 2 === 0 ? 'bg-gray-50' : 'bg-white'}"><td class="py-3 px-4 font-bold text-gray-700 w-1/3">${spec.label}</td><td class="py-3 px-4 text-gray-600">${spec.value}</td></tr>`).join('');
+
+            const reviewsList = document.getElementById('reviews-list');
+            reviewsList.innerHTML = product.reviews.map(review => `
+                <div class="border-b border-gray-100 pb-6 last:border-0">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold text-xs">${review.user.substring(0,2)}</div><span class="font-bold text-gray-900 text-sm">${review.user}</span></div>
+                        <span class="text-xs text-gray-400">${review.date}</span>
+                    </div>
+                    <div class="flex text-yellow-400 text-xs mb-2 flex gap-0.5">${renderStars(review.rating)}</div>
+                    <p class="text-gray-600 text-sm leading-relaxed">${review.text}</p>
+                </div>`).join('');
+        }
+
+        window.switchTab = function(tabName) {
+            document.getElementById('content-overview').classList.add('hidden');
+            document.getElementById('content-specs').classList.add('hidden');
+            document.getElementById('content-reviews').classList.add('hidden');
+            ['overview', 'specs', 'reviews'].forEach(t => { document.getElementById(`tab-${t}`).className = "tab-inactive px-6 py-4 text-sm font-medium transition-colors whitespace-nowrap"; });
+            document.getElementById(`content-${tabName}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabName}`).className = "tab-active px-6 py-4 text-sm font-medium transition-colors whitespace-nowrap";
+        }
+
+        window.calculateShipping = function() {
+            const zip = document.getElementById('zip-code').value;
+            const resultDiv = document.getElementById('shipping-results');
+            if (zip.length < 8) { alert("Por favor, digite um CEP válido."); return; }
+            resultDiv.classList.remove('hidden');
+            const daysSedex = Math.floor(Math.random() * 3) + 1; const priceSedex = (Math.random() * 20 + 15).toFixed(2);
+            const daysPac = Math.floor(Math.random() * 7) + 5; const pricePac = (Math.random() * 15 + 10).toFixed(2);
+            resultDiv.innerHTML = `<div class="flex justify-between items-center bg-white p-3 rounded-lg border border-gray-100 shadow-sm"><div class="flex items-center gap-3"><div class="bg-brand-100 text-brand-600 p-1.5 rounded"><i class="ph-bold ph-lightning"></i></div><div><p class="text-xs font-bold text-gray-800">Expresso (Sedex)</p><p class="text-[10px] text-gray-500">Chega em até ${daysSedex} dias úteis</p></div></div><span class="text-sm font-bold text-gray-900">R$ ${priceSedex}</span></div><div class="flex justify-between items-center bg-white p-3 rounded-lg border border-gray-100 shadow-sm"><div class="flex items-center gap-3"><div class="bg-gray-100 text-gray-600 p-1.5 rounded"><i class="ph-bold ph-truck"></i></div><div><p class="text-xs font-bold text-gray-800">Econômica (PAC)</p><p class="text-[10px] text-gray-500">Chega em até ${daysPac} dias úteis</p></div></div><span class="text-sm font-bold text-gray-900">R$ ${pricePac}</span></div>`;
+        }
+
+        window.updateQty = function(delta) { qty = Math.max(1, qty + delta); document.getElementById('qty').value = qty; }
+        function addToCart() {
+            const existing = cart.find(i => i.id === product.id);
+            if(existing) existing.quantity += qty; else cart.push({ ...product, quantity: qty });
+            localStorage.setItem('cart', JSON.stringify(cart)); updateCartUI();
+            const t = document.getElementById('toast'); t.classList.remove('translate-y-32'); setTimeout(() => t.classList.add('translate-y-32'), 2500);
+        }
+        function updateCartUI() {
+            const count = cart.reduce((a, b) => a + b.quantity, 0); const total = cart.reduce((a, b) => a + (b.price * b.quantity), 0);
+            document.getElementById('cart-badge').textContent = count; document.getElementById('cart-badge').classList.toggle('scale-0', count === 0);
+            document.getElementById('cart-total').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+            const list = document.getElementById('mini-cart-items');
+            if(count === 0) list.innerHTML = '<div class="text-center text-gray-400 py-2">Carrinho vazio</div>';
+            else list.innerHTML = cart.map(i => `<div class="flex gap-3 p-2 bg-gray-50 rounded-lg"><img src="${i.images[0]}" class="w-10 h-10 rounded object-cover border border-gray-200"><div class="flex-1 min-w-0"><p class="text-xs font-bold truncate text-gray-800">${i.name}</p><p class="text-xs text-gray-500">${i.quantity}x R$ ${i.price.toFixed(2)}</p></div></div>`).join('');
+        }
+        init();
+    </script>
+</body>
+</html>

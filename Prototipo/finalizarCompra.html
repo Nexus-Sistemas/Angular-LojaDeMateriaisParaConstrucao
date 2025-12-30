@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Compra - ConstrutoraPro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { brand: { 50: '#fff7ed', 100: '#ffedd5', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 900: '#7c2d12' } },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: { 'fade-in': 'fadeIn 0.5s ease-out forwards' },
+                    keyframes: { fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } } }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased">
+
+    <!-- Header Minimalista (Foco no Checkout) -->
+    <header class="fixed top-0 left-0 w-full bg-white shadow-sm z-50 border-b border-gray-100">
+        <div class="container mx-auto px-4 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2 group">
+                <div class="bg-gradient-to-br from-brand-500 to-brand-600 text-white p-2 rounded-lg shadow-lg"><i class="ph-bold ph-hammer text-2xl"></i></div>
+                <span class="text-2xl font-bold tracking-tight text-gray-900 hidden sm:block">Construtora<span class="text-brand-500">Pro</span></span>
+            </a>
+            <div class="flex items-center gap-2 text-green-600 font-bold bg-green-50 px-3 py-1.5 rounded-full border border-green-100 text-sm">
+                <i class="ph-fill ph-lock-key"></i> Ambiente Seguro
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 pt-28 pb-12 animate-fade-in min-h-screen">
+        <h1 class="text-2xl font-bold text-gray-900 mb-8 flex items-center gap-2"><i class="ph-duotone ph-credit-card text-brand-500"></i> Finalizar Compra</h1>
+
+        <div class="flex flex-col lg:flex-row gap-8 items-start">
+            
+            <!-- Coluna Esquerda: Formulários -->
+            <div class="w-full lg:w-2/3 space-y-6">
+                
+                <!-- Etapa 1: Identificação -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <span class="bg-brand-100 text-brand-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span> Identificação
+                    </h3>
+                    <p class="text-sm text-gray-600">Logado como <strong class="text-gray-900">Carlos Silva</strong> (carlos.silva@email.com)</p>
+                </div>
+
+                <!-- Etapa 2: Entrega -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <span class="bg-brand-100 text-brand-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span> Endereço de Entrega
+                    </h3>
+                    
+                    <div class="space-y-3">
+                        <!-- Endereço Salvo -->
+                        <label class="flex items-start gap-3 p-4 border border-brand-500 bg-brand-50 rounded-xl cursor-pointer relative">
+                            <input type="radio" name="address" checked class="mt-1 text-brand-600 focus:ring-brand-500">
+                            <div>
+                                <span class="font-bold text-gray-900 block text-sm">Casa (Principal)</span>
+                                <p class="text-sm text-gray-600 mt-1">Rua das Flores, 123 - Centro, São Paulo - SP, 01000-000</p>
+                                <p class="text-xs text-brand-700 font-bold mt-2">Receba em até 5 dias úteis</p>
+                            </div>
+                            <button class="absolute top-4 right-4 text-gray-400 hover:text-brand-600"><i class="ph-bold ph-pencil-simple"></i></button>
+                        </label>
+
+                        <!-- Botão Novo Endereço -->
+                        <button class="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 font-bold text-sm hover:border-brand-400 hover:text-brand-600 hover:bg-brand-50 transition-all flex items-center justify-center gap-2">
+                            <i class="ph-bold ph-plus"></i> Adicionar novo endereço
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Etapa 3: Pagamento -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <span class="bg-brand-100 text-brand-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">3</span> Pagamento
+                    </h3>
+
+                    <div class="grid grid-cols-3 gap-3 mb-6">
+                        <button onclick="selectPayment('credit')" id="btn-credit" class="payment-btn active flex flex-col items-center gap-2 p-3 border-2 rounded-xl transition-all border-brand-500 bg-brand-50 text-brand-700">
+                            <i class="ph-duotone ph-credit-card text-2xl"></i> <span class="text-xs font-bold">Cartão</span>
+                        </button>
+                        <button onclick="selectPayment('pix')" id="btn-pix" class="payment-btn flex flex-col items-center gap-2 p-3 border-2 border-gray-200 rounded-xl hover:border-brand-200 text-gray-500">
+                            <i class="ph-duotone ph-qr-code text-2xl"></i> <span class="text-xs font-bold">Pix (-5%)</span>
+                        </button>
+                        <button onclick="selectPayment('boleto')" id="btn-boleto" class="payment-btn flex flex-col items-center gap-2 p-3 border-2 border-gray-200 rounded-xl hover:border-brand-200 text-gray-500">
+                            <i class="ph-duotone ph-barcode text-2xl"></i> <span class="text-xs font-bold">Boleto</span>
+                        </button>
+                    </div>
+
+                    <!-- Form Cartão -->
+                    <div id="payment-credit" class="space-y-4 animate-fade-in">
+                        <div class="relative">
+                            <i class="ph-bold ph-credit-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" placeholder="Número do Cartão" class="w-full pl-10 p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                        </div>
+                        <div class="relative">
+                            <i class="ph-bold ph-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" placeholder="Nome Impresso no Cartão" class="w-full pl-10 p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="text" placeholder="Validade (MM/AA)" class="w-full p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none text-center">
+                            <input type="text" placeholder="CVV" class="w-full p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none text-center">
+                        </div>
+                        <select class="w-full p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none bg-white">
+                            <option>1x sem juros</option>
+                            <option>2x sem juros</option>
+                            <option>3x sem juros</option>
+                        </select>
+                    </div>
+
+                    <!-- Info Pix -->
+                    <div id="payment-pix" class="hidden text-center py-6 animate-fade-in">
+                        <div class="bg-green-50 p-4 rounded-xl border border-green-100 inline-block mb-4">
+                            <i class="ph-duotone ph-qr-code text-4xl text-green-600"></i>
+                        </div>
+                        <p class="text-sm text-gray-600 font-medium">O código Pix será gerado após a finalização do pedido.</p>
+                        <p class="text-xs text-gray-500 mt-1">Aprovação imediata.</p>
+                    </div>
+
+                    <!-- Info Boleto -->
+                    <div id="payment-boleto" class="hidden text-center py-6 animate-fade-in">
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 inline-block mb-4">
+                            <i class="ph-duotone ph-barcode text-4xl text-gray-600"></i>
+                        </div>
+                        <p class="text-sm text-gray-600 font-medium">O boleto será gerado na próxima tela.</p>
+                        <p class="text-xs text-gray-500 mt-1">Vencimento em 3 dias úteis.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna Direita: Resumo Fixo -->
+            <div class="w-full lg:w-1/3 lg:sticky lg:top-24">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="font-bold text-gray-900 mb-4">Resumo do Pedido</h3>
+                    
+                    <div class="max-h-60 overflow-y-auto space-y-3 mb-6 pr-2 scrollbar-thin">
+                        <!-- Item Simulado 1 -->
+                        <div class="flex gap-3">
+                            <div class="w-12 h-12 bg-gray-100 rounded border border-gray-200 overflow-hidden flex-shrink-0"><img src="https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=100" class="w-full h-full object-cover"></div>
+                            <div class="flex-1">
+                                <p class="text-xs font-bold text-gray-800 line-clamp-1">Furadeira Impacto 12V</p>
+                                <p class="text-[10px] text-gray-500">Qtd: 1</p>
+                            </div>
+                            <span class="text-xs font-bold text-gray-900">R$ 289,90</span>
+                        </div>
+                        <!-- Item Simulado 2 -->
+                        <div class="flex gap-3">
+                            <div class="w-12 h-12 bg-gray-100 rounded border border-gray-200 overflow-hidden flex-shrink-0"><img src="https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=100" class="w-full h-full object-cover"></div>
+                            <div class="flex-1">
+                                <p class="text-xs font-bold text-gray-800 line-clamp-1">Cimento CP II 50kg</p>
+                                <p class="text-[10px] text-gray-500">Qtd: 5</p>
+                            </div>
+                            <span class="text-xs font-bold text-gray-900">R$ 174,50</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 border-t border-gray-100 pt-4 mb-6">
+                        <div class="flex justify-between text-sm text-gray-600"><span>Subtotal</span><span>R$ 464,40</span></div>
+                        <div class="flex justify-between text-sm text-gray-600"><span>Frete</span><span class="text-green-600">Grátis</span></div>
+                        <div class="flex justify-between items-center mt-2 pt-2 border-t border-dashed border-gray-200">
+                            <span class="font-bold text-gray-900">Total</span>
+                            <span class="text-xl font-extrabold text-brand-600">R$ 464,40</span>
+                        </div>
+                    </div>
+
+                    <button onclick="window.location.href='order-success.html'" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-green-500/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2 group">
+                        <span>Pagar Agora</span>
+                        <i class="ph-bold ph-lock-key"></i>
+                    </button>
+                    <p class="text-[10px] text-center text-gray-400 mt-3">Ao finalizar, você concorda com nossos termos de uso.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function selectPayment(method) {
+            // Reset styles
+            document.querySelectorAll('.payment-btn').forEach(btn => {
+                btn.classList.remove('border-brand-500', 'bg-brand-50', 'text-brand-700');
+                btn.classList.add('border-gray-200', 'text-gray-500');
+            });
+            // Hide all contents
+            ['credit', 'pix', 'boleto'].forEach(id => document.getElementById(`payment-${id}`).classList.add('hidden'));
+
+            // Activate selected
+            const btn = document.getElementById(`btn-${method}`);
+            btn.classList.remove('border-gray-200', 'text-gray-500');
+            btn.classList.add('border-brand-500', 'bg-brand-50', 'text-brand-700');
+            
+            document.getElementById(`payment-${method}`).classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
