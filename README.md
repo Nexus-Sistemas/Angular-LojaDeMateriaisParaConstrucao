@@ -1,4 +1,4 @@
-![Versão Atual](https://img.shields.io/github/v/release/Nexus-Sistemas/construmonte?label=Versão&color=orange&style=for-the-badge)
+![Versão Atual](https://img.shields.io/github/v/release/Nexus-Sistemas/Angular-LojaDeMateriaisParaConstrucao?label=Versão&color=orange&style=for-the-badge)
 
 # 🏗️ ConstruMonte
 
