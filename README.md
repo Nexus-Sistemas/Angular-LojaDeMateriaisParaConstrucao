@@ -11,7 +11,7 @@ O projeto utiliza uma arquitetura **full-stack** completa, escalável e alinhada
 
 ## 📸 Preview
 
-![Preview do ConstruMonte](preview.png)
+![Preview do ConstruMonte](./preview.PNG)
 
 ---
 
