@@ -1,3 +1,5 @@
+![Versão Atual](https://img.shields.io/github/v/release/Nexus-Sistemas/construmonte?label=Versão&color=orange&style=for-the-badge)
+
 # 🏗️ ConstruMonte
 
 ### E-commerce de Materiais de Construção
