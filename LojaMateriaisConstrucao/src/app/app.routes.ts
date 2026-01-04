@@ -10,7 +10,6 @@ import { ProfilePageComponent } from './pages/profile-page/profile-page.componen
 import { RegisterPageComponent } from './pages/register-page/register-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { FaqPageComponent } from './pages/faq-page/faq-page.component';
-import { MyFavoriteProductsPageComponent } from './pages/my-favorite-products-page/my-favorite-products-page.component';
 import { AboutUsPageComponent } from './pages/about-us-page/about-us-page.component';
 import { RecoverPasswordPageComponent } from './pages/recover-password-page/recover-password-page.component';
 import { DashboardAdminPageComponent } from './pages/admin/dashboard-admin-page/dashboard-admin-page.component';
@@ -23,7 +22,10 @@ import { MainPageComponent } from './pages/admin/main-page/main-page.component';
 import { AdministrativeReportsPageComponent } from './pages/admin/administrative-reports-page/administrative-reports-page.component';
 import { adminGuard, authGuard } from './core/guards/auth.guard';
 import { ForbiddenPageComponent } from './pages/forbidden-page/forbidden-page.component';
-import { MyOrdersPageComponent } from './pages/my-orders-page/my-orders-page.component';
+import { MyPersonalDataComponent } from './shared/components/profile/my-personal-data/my-personal-data.component';
+import { MyAddressesComponent } from './shared/components/profile/my-addresses/my-addresses.component';
+import { MyFavoriteProductsComponent } from './shared/components/profile/my-favorite-products/my-favorite-products.component';
+import { MyOrdersComponent } from './shared/components/profile/my-orders/my-orders.component';
 
 export const routes: Routes = [
     {
@@ -31,13 +33,10 @@ export const routes: Routes = [
         redirectTo: 'inicio',
         pathMatch: 'full'
     },
-    
-    // --- Páginas com Layout Padrão ---
     {
         path: '',
         component: LayoutWithHeaderComponent,
         children: [
-            // Rotas Públicas (Vitrine)
             { path: 'inicio', component: HomePageComponent },
             { path: 'produto/:id', component: ProductPageComponent },
             { path: 'carrinho', component: CartPageComponent },
@@ -45,16 +44,10 @@ export const routes: Routes = [
             { path: 'sobre-nos', component: AboutUsPageComponent },
             { path: 'politica-de-privacidade', component: PrivacyPolicyPageComponent },
             
-            // Rotas Protegidas (Requer Login)
             { 
                 path: 'finalizar-compra', 
                 component: FinalizePurchasePageComponent,
                 canActivate: [authGuard] 
-            },
-            { 
-                path: 'meus-pedidos', 
-                component: MyOrdersPageComponent, 
-                canActivate: [authGuard]
             },
             { 
                 path: 'pedido/:id', 
@@ -66,55 +59,36 @@ export const routes: Routes = [
                 component: OrderConfirmedPageComponent,
                 canActivate: [authGuard]
             },
+            // CONFIGURAÇÃO DE ROTAS FILHAS PARA O PERFIL
             { 
                 path: 'perfil', 
                 component: ProfilePageComponent,
-                canActivate: [authGuard]
-            },
-            { 
-                path: 'produtos-favoritos', 
-                component: MyFavoriteProductsPageComponent,
-                canActivate: [authGuard]
-            },
+                canActivate: [authGuard],
+                children: [
+                    { path: '', redirectTo: 'dados', pathMatch: 'full' },
+                    { path: 'dados', component: MyPersonalDataComponent },
+                    { path: 'pedidos', component: MyOrdersComponent },
+                    { path: 'enderecos', component: MyAddressesComponent },
+                    { path: 'favoritos', component: MyFavoriteProductsComponent }
+                ]
+            }
         ]
     },
-    
-    // --- Páginas de Autenticação (Públicas) ---
-    {
-        path: 'login',
-        component: LoginPageComponent
-    },
-    {
-        path: 'registrar',
-        component: RegisterPageComponent
-    },
-    {
-        path: 'recuperar-senha',
-        component: RecoverPasswordPageComponent
-    },
-    
-    // --- Área Administrativa (Protegida) ---
+    { path: 'login', component: LoginPageComponent },
+    { path: 'registrar', component: RegisterPageComponent },
+    { path: 'recuperar-senha', component: RecoverPasswordPageComponent },
     {
         path: 'dashboard-admin',
         component: DashboardAdminPageComponent,
         canActivate: [authGuard, adminGuard],
         children: [
             { path: '', component: MainPageComponent },
-            { path: 'registrar-produto', component: RegisterProductPageComponent },
+            { path: 'registrar-product', component: RegisterProductPageComponent },
             { path: 'registrar-cliente', component: RegisterCustomerPageComponent },
             { path: 'pedidos', component: AdminOrdersPageComponent },
             { path: 'relatorios-administrativos', component: AdministrativeReportsPageComponent }
         ]
     },
-    
-    { 
-        path: 'acesso-negado', 
-        component: ForbiddenPageComponent
-    },
-    
-    // Rota coringa (404)
-    {
-        path: '**',
-        component: NotFoundPageComponent
-    }
+    { path: 'acesso-negado', component: ForbiddenPageComponent },
+    { path: '**', component: NotFoundPageComponent }
 ];

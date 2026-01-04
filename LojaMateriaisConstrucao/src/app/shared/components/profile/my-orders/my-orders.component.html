@@ -1,0 +1,132 @@
+<div class="container mx-auto px-4 py-4 max-w-5xl min-h-[60vh]">
+    <!-- Cabeçalho -->
+    <div class="mb-8 border-b border-gray-100 pb-4">
+        <h1 class="text-3xl font-bold text-gray-900">Meus Pedidos</h1>
+        <p class="text-gray-500 mt-1">Acompanhe o status e histórico das suas compras.</p>
+    </div>
+    
+    <!-- LOADING STATE -->
+    @if (isLoading()) {
+        <div class="space-y-4">
+            <!-- Skeleton loader simples -->
+            @for (i of [1,2,3]; track i) {
+                <div class="bg-white rounded-xl p-6 border border-gray-100 shadow-sm animate-pulse">
+                    <div class="flex justify-between mb-4">
+                        <div class="h-6 w-32 bg-gray-200 rounded"></div>
+                        <div class="h-6 w-24 bg-gray-200 rounded"></div>
+                    </div>
+                    <div class="h-16 bg-gray-100 rounded mb-4"></div>
+                    <div class="flex justify-end">
+                        <div class="h-10 w-32 bg-gray-200 rounded-lg"></div>
+                    </div>
+                </div>
+            }
+        </div>
+    } 
+    
+    <!-- ERROR STATE -->
+    @else if (hasError()) {
+        <div class="text-center py-16 bg-red-50 rounded-2xl border border-red-100">
+            <div class="inline-flex bg-red-100 p-3 rounded-full mb-4">
+                <i class="ph-duotone ph-warning-circle text-3xl text-red-600"></i>
+            </div>
+            <h3 class="text-lg font-bold text-red-900">Erro ao carregar pedidos</h3>
+            <p class="text-red-700 mb-6">Não foi possível recuperar o seu histórico. Tente novamente.</p>
+            <button (click)="loadOrders()" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                Tentar Novamente
+            </button>
+        </div>
+    }
+    
+    <!-- EMPTY STATE (Sem pedidos) -->
+    @else if (orders().length === 0) {
+        <div class="text-center py-20 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+            <div class="inline-flex bg-white p-4 rounded-full shadow-sm mb-4">
+                <i class="ph-duotone ph-shopping-bag text-4xl text-brand-600"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Ainda não tem pedidos</h3>
+            <p class="text-gray-500 mb-8 max-w-md mx-auto">Explore o nosso catálogo e encontre os melhores produtos para a sua obra ou casa.</p>
+            <a routerLink="/inicio" class="inline-flex items-center px-6 py-3 bg-brand-600 text-white font-bold rounded-xl hover:bg-brand-700 transition-all shadow-lg shadow-brand-500/20 transform hover:-translate-y-0.5">
+                Ir para a Loja
+                <i class="ph-bold ph-arrow-right ml-2"></i>
+            </a>
+        </div>
+    }
+    
+    <!-- LISTA DE PEDIDOS -->
+    @else {
+        <div class="space-y-6">
+            @for (order of orders(); track order.id) {
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all overflow-hidden group">
+                    
+                    <!-- Header do Card -->
+                    <div class="p-6 border-b border-gray-50 flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gray-50/50">
+                        <div class="flex items-start gap-4">
+                            <div class="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+                                <i class="ph-duotone ph-package text-2xl text-brand-600"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase font-bold tracking-wider">Pedido #{{ order.id.slice(0, 8) }}...</p>
+                                <p class="text-sm font-medium text-gray-900 mt-0.5">
+                                    Realizado em {{ order.dataPedido | date:"d 'de' MMMM, y 'às' HH:mm" }}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-3">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border uppercase tracking-wide"
+                            [ngClass]="getStatusColor(order.status)">
+                            <i class="ph-fill" [ngClass]="getStatusIcon(order.status)"></i>
+                            {{ getStatusLabel(order.status) }}
+                        </span>
+                    </div>
+                </div>
+                
+                <!-- Corpo do Card -->
+                <div class="p-6">
+                    <div class="flex flex-col md:flex-row justify-between gap-6">
+                        
+                        <!-- Resumo dos Itens (Mostra os primeiros 2) -->
+                        <div class="flex-1 space-y-3">
+                            <p class="text-xs font-bold text-gray-400 uppercase">Itens do pedido</p>
+                            @for (item of order.itens.slice(0, 3); track $index) {
+                                <div class="flex items-center justify-between text-sm">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-5 h-5 flex items-center justify-center bg-gray-100 rounded text-xs font-bold text-gray-600">
+                                            {{ item.quantidade }}x
+                                        </span>
+                                        <span class="text-gray-700 truncate max-w-[200px] sm:max-w-[300px]">{{ item.nomeProduto }}</span>
+                                    </div>
+                                    <span class="text-gray-900 font-medium">{{ item.subTotal | currency:'BRL' }}</span>
+                                </div>
+                            }
+                            
+                            @if (order.itens.length > 3) {
+                                <p class="text-xs text-gray-500 mt-2 font-medium italic">
+                                    + {{ order.itens.length - 3 }} outros itens...
+                                </p>
+                            }
+                        </div>
+                        
+                        <!-- Resumo Financeiro e Ação -->
+                        <div class="md:w-64 md:border-l md:border-gray-100 md:pl-6 flex flex-col justify-between gap-4">
+                            <div>
+                                <p class="text-xs font-bold text-gray-400 uppercase mb-1">Valor Total</p>
+                                <p class="text-2xl font-extrabold text-brand-600">
+                                    {{ order.valorTotal | currency:'BRL' }}
+                                </p>
+                            </div>
+                            
+                            <a [routerLink]="['/pedido', order.id]" 
+                            class="w-full inline-flex items-center justify-center px-4 py-2.5 border border-gray-300 text-gray-700 font-bold rounded-lg hover:bg-gray-50 hover:text-brand-600 hover:border-brand-200 transition-all text-sm group/btn">
+                            Ver Detalhes
+                            <i class="ph-bold ph-arrow-right ml-2 group-hover/btn:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+}
+</div>

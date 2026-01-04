@@ -1,0 +1,92 @@
+<div class="w-full overflow-hidden">
+    
+    <!-- Cabeçalho (Simplificado e sem borda inferior pesada) -->
+    <div class="flex justify-between items-center mb-4">
+        <div class="flex items-center gap-2">
+            <div class="bg-brand-50 p-1.5 rounded-lg text-brand-600">
+                <i class="ph-duotone ph-truck text-lg"></i>
+            </div>
+            <span class="text-xs font-bold text-gray-700 uppercase tracking-wider">Cálculo de Entrega</span>
+        </div>
+        
+        @if (isCalculated()) {
+            <button (click)="reset()" class="text-[10px] font-bold text-brand-600 hover:text-brand-700 transition-colors flex items-center gap-1 cursor-pointer">
+                <i class="ph-bold ph-arrows-counter-clockwise"></i> Alterar CEP
+            </button>
+        }
+    </div>
+
+    <div>
+        <!-- Input de CEP (Visual Minimalista) -->
+        @if (!isCalculated()) {
+            <div class="flex gap-2">
+                <div class="relative flex-1 group">
+                    <i class="ph-bold ph-map-pin absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-500 transition-colors"></i>
+                    <input 
+                        type="text" 
+                        [(ngModel)]="zipCode" 
+                        mask="00000-000"
+                        (keyup.enter)="calculate()"
+                        placeholder="00000-000" 
+                        class="w-full pl-10 pr-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:bg-white focus:ring-2 focus:ring-brand-100 focus:border-brand-500 outline-none transition-all placeholder:text-gray-400">
+                </div>
+                <button 
+                    (click)="calculate()"
+                    [disabled]="isLoading() || zipCode().length < 8"
+                    class="px-5 py-2.5 bg-gray-900 text-white font-bold text-sm rounded-xl hover:bg-brand-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer">
+                    @if (isLoading()) {
+                        <i class="ph-bold ph-spinner animate-spin"></i>
+                    } @else {
+                        Calcular
+                    }
+                </button>
+            </div>
+            <p class="text-[10px] text-gray-400 mt-2 ml-1 italic">Informe o CEP para ver prazos e valores.</p>
+        }
+
+        <!-- Opções de Frete (Estilizadas como cards internos) -->
+        @if (isCalculated()) {
+            <div class="space-y-2 animate-fade-in">
+                @for (option of shippingOptions(); track option.id) {
+                    <label 
+                        class="flex items-center justify-between p-3 border rounded-xl cursor-pointer transition-all group"
+                        [ngClass]="{
+                            'border-brand-500 bg-brand-50/30 ring-1 ring-brand-500': selectedOptionId() === option.id,
+                            'border-gray-100 hover:border-gray-200 bg-white': selectedOptionId() !== option.id
+                        }">
+                        
+                        <div class="flex items-center gap-3">
+                            <input 
+                                type="radio" 
+                                name="shipping_option" 
+                                [checked]="selectedOptionId() === option.id"
+                                (change)="selectOption(option)"
+                                class="w-4 h-4 text-brand-600 focus:ring-brand-500 accent-brand-600">
+                            
+                            <div class="bg-gray-50 p-2 rounded-lg group-hover:scale-110 transition-transform hidden sm:block">
+                                <i [class]="'ph-duotone ' + option.icon + ' text-xl text-brand-600'"></i>
+                            </div>
+
+                            <div>
+                                <span class="block text-sm font-bold text-gray-900">{{ option.label }}</span>
+                                <span class="block text-[10px] text-gray-500 font-medium">{{ option.deadline }}</span>
+                            </div>
+                        </div>
+
+                        <div class="text-right">
+                            <span class="block text-sm font-extrabold text-gray-900">{{ option.price | currency:'BRL' }}</span>
+                            @if (option.id === 'fast') {
+                                <span class="text-[9px] font-bold text-orange-500 uppercase tracking-tighter">Mais rápido</span>
+                            }
+                        </div>
+                    </label>
+                }
+            </div>
+            
+            <div class="mt-3 px-1 flex items-center gap-2 text-[10px] text-gray-400">
+                <i class="ph-bold ph-info"></i>
+                <span>Enviando para o CEP <strong>{{ zipCode() }}</strong></span>
+            </div>
+        }
+    </div>
+</div>

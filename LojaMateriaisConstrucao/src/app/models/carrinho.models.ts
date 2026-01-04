@@ -1,6 +1,7 @@
 export interface ItemCarrinho {
     id: string;
     nomeProduto: string;
+    produtoId: string;
     quantidade: number;
     precoUnitario: number;
     subTotal: number;

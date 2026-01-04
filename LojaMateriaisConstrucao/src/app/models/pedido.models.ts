@@ -103,3 +103,11 @@ export interface Pedido {
     pagamento?: Pagamento;
     itens: ItemPedido[];
 }
+
+export interface ShippingOption {
+    id: string;
+    label: string;
+    deadline: string;
+    price: number;
+    icon: string;
+}

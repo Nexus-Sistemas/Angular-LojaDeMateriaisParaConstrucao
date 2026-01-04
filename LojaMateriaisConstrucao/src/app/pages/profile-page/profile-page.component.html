@@ -1,144 +1,65 @@
 <main class="font-sans antialiased text-gray-800 bg-gray-50/50 min-h-screen pt-28 pb-16 px-4 animate-fade-in">
     <div class="container mx-auto max-w-7xl">
-        
         <div class="flex flex-col lg:flex-row gap-8 items-start">
             
-            <!-- Sidebar de Navegação (Sticky no Desktop) -->
+            <!-- Sidebar de Navegação -->
             <aside class="w-full lg:w-80 shrink-0 lg:sticky lg:top-28 space-y-6">
                 
-                <!-- Card do Perfil Resumido -->
+                <!-- Card de Resumo do Utilizador -->
                 <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 flex flex-col items-center text-center relative overflow-hidden">
-                    <!-- Fundo Decorativo -->
                     <div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-brand-50 to-white"></div>
-                    
                     <div class="relative w-24 h-24 mb-4">
                         <div class="w-full h-full rounded-full border-4 border-white shadow-md overflow-hidden bg-gray-200">
                             <img [src]="user().avatar" [alt]="user().name" class="w-full h-full object-cover">
                         </div>
-                        <div class="absolute bottom-0 right-0 bg-green-500 w-5 h-5 rounded-full border-2 border-white shadow-sm" title="Online"></div>
                     </div>
-                    
-                    <h2 class="font-bold text-xl text-gray-900 capitalize leading-tight mb-1">{{ user().name }}</h2>
-                    <p class="text-sm text-gray-500 font-medium truncate max-w-full px-4 mb-4">{{ user().email }}</p>
-                    
+                    <h2 class="font-bold text-xl text-gray-900 capitalize mb-1">{{ user().name }}</h2>
+                    <p class="text-sm text-gray-500 font-medium truncate w-full px-4 mb-4">{{ user().email }}</p>
                     <div class="bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100 inline-flex items-center gap-2">
                         <i class="ph-fill ph-crown text-amber-400"></i>
-                        <span class="text-xs font-bold text-gray-600 uppercase tracking-wide">Membro desde {{ user().memberSince }}</span>
+                        <span class="text-xs font-bold text-gray-600 uppercase">Membro desde {{ user().memberSince }}</span>
                     </div>
                 </div>
                 
-                <!-- Menu de Navegação -->
+                <!-- Menu Principal -->
                 <nav class="bg-white rounded-3xl shadow-sm border border-gray-100 p-3 flex flex-col gap-1">
-                    
-                    <button (click)="setActiveSection('personal')" 
-                        class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-200 group relative overflow-hidden text-left"
-                        [ngClass]="activeSection() === 'personal' ? 'bg-brand-50 text-brand-700 font-bold' : 'text-gray-600 hover:bg-gray-50 font-medium'">
-                        
-                        <!-- Indicador Ativo -->
-                        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-brand-500 rounded-r-full transition-transform duration-300"
-                             [class.scale-y-0]="activeSection() !== 'personal'"
-                             [class.scale-y-100]="activeSection() === 'personal'"></div>
-
-                        <i class="text-xl" [ngClass]="activeSection() === 'personal' ? 'ph-duotone ph-user-circle' : 'ph-bold ph-user'"></i>
-                        <span class="relative z-10">Dados Pessoais</span>
-                    </button>
-                    
-                    <button (click)="setActiveSection('orders')" 
-                        class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-200 group relative overflow-hidden text-left"
-                        [ngClass]="activeSection() === 'orders' ? 'bg-brand-50 text-brand-700 font-bold' : 'text-gray-600 hover:bg-gray-50 font-medium'">
-                        
-                        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-brand-500 rounded-r-full transition-transform duration-300"
-                             [class.scale-y-0]="activeSection() !== 'orders'"
-                             [class.scale-y-100]="activeSection() === 'orders'"></div>
-
-                        <i class="text-xl" [ngClass]="activeSection() === 'orders' ? 'ph-duotone ph-package' : 'ph-bold ph-package'"></i>
-                        <span class="relative z-10">Meus Pedidos</span>
-                    </button>
-                    
-                    <button (click)="setActiveSection('addresses')" 
-                        class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-200 group relative overflow-hidden text-left"
-                        [ngClass]="activeSection() === 'addresses' ? 'bg-brand-50 text-brand-700 font-bold' : 'text-gray-600 hover:bg-gray-50 font-medium'">
-                        
-                        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-brand-500 rounded-r-full transition-transform duration-300"
-                             [class.scale-y-0]="activeSection() !== 'addresses'"
-                             [class.scale-y-100]="activeSection() === 'addresses'"></div>
-
-                        <i class="text-xl" [ngClass]="activeSection() === 'addresses' ? 'ph-duotone ph-map-pin' : 'ph-bold ph-map-pin'"></i>
-                        <span class="relative z-10">Endereços</span>
-                    </button>
-                    
-                    <button (click)="setActiveSection('wallet')" 
-                        class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-200 group relative overflow-hidden text-left"
-                        [ngClass]="activeSection() === 'wallet' ? 'bg-brand-50 text-brand-700 font-bold' : 'text-gray-600 hover:bg-gray-50 font-medium'">
-                        
-                        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-brand-500 rounded-r-full transition-transform duration-300"
-                             [class.scale-y-0]="activeSection() !== 'wallet'"
-                             [class.scale-y-100]="activeSection() === 'wallet'"></div>
-
-                        <i class="text-xl" [ngClass]="activeSection() === 'wallet' ? 'ph-duotone ph-wallet' : 'ph-bold ph-credit-card'"></i>
-                        <span class="relative z-10">Carteira</span>
-                    </button>
-                    
-                    <div class="h-px bg-gray-100 my-2 mx-4"></div>
-                    
-                    <button (click)="logout()" class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-red-500 font-bold hover:bg-red-50 transition-all text-left group">
-                        <div class="w-1 h-8"></div> <!-- Spacer para alinhar com os de cima -->
-                        <i class="ph-bold ph-sign-out text-xl group-hover:-translate-x-1 transition-transform"></i>
-                        <span>Sair da Conta</span>
-                    </button>
-                </nav>
-            </aside>
-
-            <!-- Área de Conteúdo Principal -->
-            <div class="flex-1 min-w-0">
+                    <a routerLink="dados" routerLinkActive="bg-brand-50 text-brand-700 font-bold"
+                    class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all text-gray-600 hover:bg-gray-50 font-medium">
+                    <i class="ph-bold ph-user-circle text-xl"></i>
+                    <span>Dados Pessoais</span>
+                </a>
                 
-                <!-- Título Mobile (Aparece apenas em telas pequenas para contexto) -->
-                <div class="lg:hidden mb-6">
-                    <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                        @switch (activeSection()) {
-                            @case ('personal') { <i class="ph-fill ph-user text-brand-500"></i> Dados Pessoais }
-                            @case ('orders') { <i class="ph-fill ph-package text-brand-500"></i> Meus Pedidos }
-                            @case ('addresses') { <i class="ph-fill ph-map-pin text-brand-500"></i> Endereços }
-                            @case ('wallet') { <i class="ph-fill ph-wallet text-brand-500"></i> Carteira }
-                        }
-                    </h1>
-                </div>
+                <a routerLink="pedidos" routerLinkActive="bg-brand-50 text-brand-700 font-bold"
+                class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all text-gray-600 hover:bg-gray-50 font-medium">
+                <i class="ph-bold ph-package text-xl"></i>
+                <span>Os Meus Pedidos</span>
+            </a>
+            
+            <a routerLink="enderecos" routerLinkActive="bg-brand-50 text-brand-700 font-bold"
+            class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all text-gray-600 hover:bg-gray-50 font-medium">
+            <i class="ph-bold ph-map-pin text-xl"></i>
+            <span>Endereços</span>
+        </a>
+        
+        <a routerLink="favoritos" routerLinkActive="bg-brand-50 text-brand-700 font-bold"
+        class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all text-gray-600 hover:bg-gray-50 font-medium">
+        <i class="ph-bold ph-heart text-xl"></i>
+        <span>Favoritos</span>
+    </a>
+    
+    <div class="h-px bg-gray-100 my-2 mx-4"></div>
+    
+    <button (click)="logout()" class="w-full flex items-center gap-4 px-4 py-3.5 rounded-2xl text-red-500 font-bold hover:bg-red-50 transition-all text-left group">
+        <i class="ph-bold ph-sign-out text-xl group-hover:-translate-x-1 transition-transform"></i>
+        <span>Sair da Conta</span>
+    </button>
+</nav>
+</aside>
 
-                <!-- SEÇÃO: Dados Pessoais -->
-                @if (activeSection() === 'personal') {
-                    <app-my-personal-data></app-my-personal-data>
-                }
-                
-                <!-- SEÇÃO: Meus Pedidos -->
-                @if (activeSection() === 'orders') {
-                    <app-my-orders-page></app-my-orders-page>
-                }
-                
-                <!-- SEÇÃO: Endereços -->
-                @if (activeSection() === 'addresses') {
-                    <app-my-addresses></app-my-addresses>
-                }
-                
-                <!-- SEÇÃO: Carteira -->
-                @if (activeSection() === 'wallet') {
-                    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 lg:p-12 animate-fade-in text-center py-32 flex flex-col items-center justify-center">
-                        <div class="bg-gray-50 p-8 rounded-full mb-6 relative">
-                            <i class="ph-duotone ph-wallet text-7xl text-gray-300"></i>
-                            <div class="absolute -right-2 -bottom-2 bg-brand-500 text-white p-2 rounded-full border-4 border-white shadow-sm">
-                                <i class="ph-bold ph-clock text-xl"></i>
-                            </div>
-                        </div>
-                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Carteira Digital em Breve</h3>
-                        <p class="text-gray-500 max-w-md mx-auto leading-relaxed">
-                            Estamos preparando uma forma mais rápida e segura para você gerenciar seus pagamentos e reembolsos diretamente pela plataforma.
-                        </p>
-                        <button class="mt-8 px-6 py-2 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition-colors text-sm">
-                            Notificar quando disponível
-                        </button>
-                    </div>
-                }
-                
-            </div>
-        </div>
-    </div>
+<!-- Zona de Conteúdo Dinâmico -->
+<div class="flex-1 min-w-0">
+    <router-outlet></router-outlet>
+</div>
+</div>
+</div>
 </main>
