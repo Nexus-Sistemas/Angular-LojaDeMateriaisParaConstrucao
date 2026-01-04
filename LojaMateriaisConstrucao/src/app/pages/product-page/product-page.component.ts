@@ -1,92 +1,127 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { MOCK_PRODUCTS } from '../../shared/mocks/MOCK_PRODUCTS';
-import { ProductFullDetails } from '../../shared/interfaces/Product';
+import { AuthService } from '../../core/auth/auth.service';
+import { Produto } from '../../models/catalogo.models';
+import { CarrinhoService } from '../../services/carrinho.service';
+import { CatalogoService } from '../../services/catalogo.service';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 
 @Component({
     selector: 'app-product-page',
-    imports: [CommonModule, FormsModule, RouterLink],
+    imports: [CommonModule, FormsModule, RouterLink, NgxMaskDirective],
+    providers: [provideNgxMask()],
     templateUrl: './product-page.component.html',
     styleUrl: './product-page.component.css'
 })
 
 export class ProductPageComponent implements OnInit {
     private route = inject(ActivatedRoute);
+    private router = inject(Router);
     private toastr = inject(ToastrService);
-    // private cartService = inject(CartService);
+    private catalogoService = inject(CatalogoService);
+    private carrinhoService = inject(CarrinhoService);
+    private authService = inject(AuthService);
     
-    product: ProductFullDetails | undefined;
-    currentImage: string = '';
-    activeTab: 'overview' | 'specs' | 'reviews' = 'overview';
-    quantity: number = 1;
+    // Estado do Produto
+    product = signal<Produto | null>(null);
+    loading = signal(true);
+    
+    // Estado Visual
+    currentImage = signal<string>('');
+    activeTab = signal<'overview' | 'specs' | 'reviews'>('overview');
+    quantity = signal(1);
     
     // Variáveis para Zoom
-    zoomTransform = 'scale(1)';
-    zoomOrigin = 'center center';
+    zoomTransform = signal('scale(1)');
+    zoomOrigin = signal('center center');
     
     // Variáveis de Frete
-    zipCode: string = '';
-    shippingResult: null | { type: string, days: number, price: number }[] = null;
+    zipCode = signal('');
+    shippingResult = signal<null | { type: string, days: number, price: number }[]>(null);
     
-    // Mock de Dados Extras
+    // Mocks Visuais
+    mockImages = [
+        'https://placehold.co/600x600/f3f4f6/a1a1aa?text=Produto+Img+1',
+        'https://placehold.co/600x600/f3f4f6/a1a1aa?text=Detalhe+2',
+        'https://placehold.co/600x600/f3f4f6/a1a1aa?text=Uso+3'
+    ];
+    
     productExtras = {
+        rating: 4.8,
+        brand: 'NEXUS',
         specs: [
-            { label: "Modelo", value: "PRO-X" },
-            { label: "Peso", value: "12 kg" },
-            { label: "Material", value: "Aço Inoxidável" },
+            { label: "Material", value: "Premium" },
             { label: "Garantia", value: "12 meses" },
-            { label: "Cor", value: "Cinza" },
-            { label: "Uso Indicado", value: "Interno e Externo" }
+            { label: "Cor", value: "Padrão" },
+            { label: "Uso Indicado", value: "Profissional e Doméstico" }
         ],
         reviews: [
-            { user: "Carlos S.", date: "10/10/2023", rating: 5, text: "Produto excelente, superou minhas expectativas. A entrega foi muito rápida!" },
-            { user: "Fernanda M.", date: "05/09/2023", rating: 4, text: "Muito bom, mas achei um pouco pesado. De resto, funciona perfeitamente." },
-            { user: "João P.", date: "20/08/2023", rating: 5, text: "Melhor custo benefício do mercado. Recomendo a todos." }
+            { user: "Carlos S.", date: "10/10/2023", rating: 5, text: "Produto excelente, superou minhas expectativas." },
+            { user: "Fernanda M.", date: "05/09/2023", rating: 4, text: "Muito bom, funciona perfeitamente." },
+            { user: "João P.", date: "20/08/2023", rating: 5, text: "Melhor custo benefício do mercado." }
         ]
     };
     
+    // --- COMPUTEDS ---
+    
+    finalPrice = computed(() => {
+        const p = this.product();
+        if (!p) return 0;
+        return p.precoPromocional || p.preco;
+    });
+    
+    discountPercentage = computed(() => {
+        const p = this.product();
+        if (!p || !p.precoPromocional) return 0;
+        return Math.round(((p.preco - p.precoPromocional) / p.preco) * 100);
+    });
+    
     ngOnInit() {
         this.route.paramMap.subscribe(params => {
-            let id = Number(params.get('id'));
-            
-            if (!id || isNaN(id)) {
-                id = 1; 
+            const id = params.get('id');
+            if (id) {
+                this.loadProduct(id);
+            } else {
+                this.toastr.error('ID do produto inválido');
+                this.router.navigate(['/']);
             }
-            
-            this.loadProduct(id);
         });
     }
     
-    loadProduct(id: number) {
-        this.product = MOCK_PRODUCTS.find(p => p.id === id);
-        
-        if (this.product) {
-            this.currentImage = this.product.images[0];
-            this.quantity = 1;
-            this.activeTab = 'overview';
-            this.shippingResult = null;
-        } else {
-            this.toastr.error('Produto não encontrado', 'Erro');
-        }
+    loadProduct(id: string) {
+        this.loading.set(true);
+        this.catalogoService.obterProduto(id).subscribe({
+            next: (data) => {
+                this.product.set(data);
+                this.currentImage.set(this.mockImages[0]);
+                this.quantity.set(1);
+                this.loading.set(false);
+            },
+            error: (err) => {
+                console.error(err);
+                this.toastr.error('Produto não encontrado ou indisponível.', 'Erro');
+                this.router.navigate(['/']);
+            }
+        });
     }
     
     // --- Lógica Visual ---
     
     setActiveTab(tab: 'overview' | 'specs' | 'reviews') {
-        this.activeTab = tab;
+        this.activeTab.set(tab);
     }
     
     changeImage(img: string) {
-        this.currentImage = img;
+        this.currentImage.set(img);
     }
     
     updateQty(delta: number) {
-        const newVal = this.quantity + delta;
+        const newVal = this.quantity() + delta;
         if (newVal >= 1) {
-            this.quantity = newVal;
+            this.quantity.set(newVal);
         }
     }
     
@@ -98,43 +133,54 @@ export class ProductPageComponent implements OnInit {
         const x = ((e.clientX - left) / width) * 100;
         const y = ((e.clientY - top) / height) * 100;
         
-        this.zoomOrigin = `${x}% ${y}%`;
-        this.zoomTransform = 'scale(2)';
+        this.zoomOrigin.set(`${x}% ${y}%`);
+        this.zoomTransform.set('scale(2)');
     }
     
     onMouseLeave() {
-        this.zoomTransform = 'scale(1)';
-        this.zoomOrigin = 'center center';
+        this.zoomTransform.set('scale(1)');
+        this.zoomOrigin.set('center center');
     }
     
     // --- Ações ---
     
     addToCart() {
-        if (!this.product?.inStock) return;
-        this.toastr.success(`Adicionado ${this.quantity}x ${this.product.name}`, 'Sucesso!');
+        const p = this.product();
+        if (!p) return;
+        
+        if (p.estoque <= 0) {
+            this.toastr.warning('Produto fora de estoque.', 'Ops!');
+            return;
+        }
+        
+        if (!this.authService.isAuthenticated()) {
+            this.toastr.info('Faça login para comprar.', 'Atenção');
+            this.router.navigate(['/login']);
+            return;
+        }
+        
+        const userId = this.authService.currentUser()?.id;
+        if (userId) {
+            this.carrinhoService.adicionarItem(userId, p.id, this.quantity()).subscribe({
+                next: () => {
+                    this.toastr.success(`Adicionado ${this.quantity()}x ${p.titulo}`, 'Sucesso!');
+                },
+                error: () => {
+                    this.toastr.error('Erro ao adicionar ao carrinho.', 'Erro');
+                }
+            });
+        }
     }
     
     calculateShipping() {
-        if (this.zipCode.length < 8) {
+        if (this.zipCode().length < 8) {
             this.toastr.warning('Digite um CEP válido', 'Atenção');
             return;
         }
         
-        this.shippingResult = [
+        this.shippingResult.set([
             { type: 'Expresso (Sedex)', days: 2, price: 32.50 },
             { type: 'Econômica (PAC)', days: 7, price: 15.90 }
-        ];
-    }
-    
-    // Getters Auxiliares
-    get finalPrice(): number {
-        if (!this.product) return 0;
-        return this.product.discount 
-        ? this.product.price * (1 - this.product.discount / 100) 
-        : this.product.price;
-    }
-    
-    get discountValue(): number {
-        return this.product ? Math.round(this.product.discount || 0) : 0;
+        ]);
     }
 }

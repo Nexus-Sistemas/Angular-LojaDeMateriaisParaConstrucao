@@ -1,145 +1,328 @@
-<main class="font-sans antialiased text-gray-800 bg-gray-50 min-h-screen pt-12 pb-12 px-4 animate-fade-in">
-    <div class="container mx-auto mt-20">
-        
-        <!-- Breadcrumbs & Header -->
-        <div class="mb-8">
-            <a href="#" class="flex items-center gap-2 text-gray-500 hover:text-orange-600 font-semibold transition-colors mb-4 w-fit">
-                <i class="ph-bold ph-arrow-left"></i> Voltar para Meus Pedidos
-            </a>
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                        Pedido #{{ orderId }}
-                        <span class="bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full border border-blue-200">Em Trânsito</span>
-                    </h1>
-                    <p class="text-gray-500 mt-1">Realizado em {{ orderDate }}</p>
-                </div>
-                <div class="flex gap-3">
-                    <button class="flex items-center gap-2 px-4 py-2 border border-gray-200 bg-white rounded-lg text-gray-600 font-bold text-sm hover:bg-gray-50 transition-colors">
-                        <i class="ph-bold ph-file-pdf"></i> Nota Fiscal
-                    </button>
-                    <button class="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg font-bold text-sm hover:bg-orange-700 shadow-lg shadow-orange-500/20 transition-all">
-                        <i class="ph-bold ph-whatsapp-logo"></i> Preciso de Ajuda
-                    </button>
-                </div>
-            </div>
+<!-- 1. Estado de Carregamento -->
+@if (loading()) {
+    <div class="h-screen flex flex-col items-center justify-center text-gray-500 gap-4 bg-gray-50">
+        <div class="bg-white p-4 rounded-full shadow-sm">
+            <i class="ph-duotone ph-spinner animate-spin text-4xl text-brand-600"></i>
         </div>
-        
-        <!-- Timeline de Rastreamento -->
-        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 mb-8 overflow-hidden">
-            <h3 class="font-bold text-gray-900 mb-8">Acompanhamento da Entrega</h3>
-            
-            <div class="relative px-4">
-                <!-- Linhas de Fundo -->
-                <div class="timeline-line"></div>
-                <!-- Barra de Progresso Dinâmica -->
-                <div class="timeline-progress" [style.width.%]="progressPercentage"></div>
+        <p class="animate-pulse font-medium text-sm">Carregando detalhes do pedido...</p>
+    </div>
+} 
+@else {
+    <!-- 2. Conteúdo do Pedido -->
+    @if (pedido(); as order) {
+        <main class="font-sans antialiased text-gray-800 bg-gray-50 min-h-screen pt-28 pb-16 px-4 animate-fade-in">
+            <!-- CONTAINER MAIS LARGO (Sem max-w-6xl) -->
+            <div class="container mx-auto">
                 
-                <div class="relative flex justify-between z-10">
-                    @for (step of timelineSteps; track step.label) {
-                        <div class="flex flex-col items-center gap-2 text-center w-24">
-                            <!-- Lógica de Estilo por Status -->
-                            @if (step.status === 'completed') {
-                                <div class="w-8 h-8 rounded-full bg-orange-600 text-white flex items-center justify-center border-4 border-white shadow-sm">
-                                    <i class="ph-bold ph-check"></i>
+                <!-- Breadcrumbs & Header -->
+                <div class="mb-8">
+                    <a routerLink="/perfil" fragment="pedidos" class="flex items-center gap-2 text-gray-500 hover:text-brand-600 font-semibold transition-colors mb-6 w-fit text-sm">
+                        <i class="ph-bold ph-arrow-left"></i> Voltar para Meus Pedidos
+                    </a>
+
+                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+                        <div class="flex items-start gap-4">
+                            <div class="bg-brand-50 p-3 rounded-xl hidden sm:block">
+                                <i class="ph-duotone ph-package text-3xl text-brand-600"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-3 flex-wrap">
+                                    <h1 class="text-2xl font-bold text-gray-900">Pedido #{{ order.id.substring(0,8) | uppercase }}</h1>
+                                    
+                                    <!-- Badge de Status -->
+                                    <span class="text-xs font-bold px-3 py-1 rounded-full border uppercase tracking-wide flex items-center gap-1.5"
+                                          [ngClass]="{
+                                            'bg-blue-50 text-blue-700 border-blue-200': order.status !== 'CANCELADO' && order.status !== 'ENTREGUE',
+                                            'bg-green-50 text-green-700 border-green-200': order.status === 'ENTREGUE',
+                                            'bg-red-50 text-red-700 border-red-200': order.status === 'CANCELADO'
+                                          }">
+                                        <span class="w-2 h-2 rounded-full" 
+                                              [ngClass]="{
+                                                'bg-blue-500': order.status !== 'CANCELADO' && order.status !== 'ENTREGUE',
+                                                'bg-green-500': order.status === 'ENTREGUE',
+                                                'bg-red-500': order.status === 'CANCELADO'
+                                              }"></span>
+                                        {{ order.status.replace('_', ' ') }}
+                                    </span>
                                 </div>
-                                <p class="text-xs font-bold text-orange-700">{{ step.label }}</p>
-                            } @else if (step.status === 'current') {
-                                <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center border-4 border-blue-100 shadow-md animate-pulse">
-                                    <i [class]="'ph-bold ' + step.icon"></i>
-                                </div>
-                                <p class="text-xs font-bold text-blue-700">{{ step.label }}</p>
-                            } @else {
-                                <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-400 flex items-center justify-center border-4 border-white">
-                                    <i [class]="'ph-bold ' + step.icon"></i>
-                                </div>
-                                <p class="text-xs font-bold text-gray-400">{{ step.label }}</p>
-                            }
-                            
-                            @if (step.dateOrInfo) {
-                                <p class="text-[10px] text-gray-400">{{ step.dateOrInfo }}</p>
-                            }
+                                <p class="text-sm text-gray-500 mt-1 flex items-center gap-2">
+                                    <i class="ph-bold ph-calendar-blank"></i>
+                                    Realizado em {{ order.dataPedido | date:"dd 'de' MMMM 'de' yyyy, 'às' HH:mm" }}
+                                </p>
+                            </div>
                         </div>
-                    }
-                </div>
-            </div>
-        </div>
-        
-        <div class="flex flex-col lg:flex-row gap-8">
-            
-            <!-- Lista de Produtos -->
-            <div class="w-full lg:w-2/3 space-y-6">
-                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="p-6 border-b border-gray-100 bg-gray-50/50">
-                        <h3 class="font-bold text-gray-900">Itens do Pedido</h3>
+
+                        <div class="flex gap-3 w-full lg:w-auto">
+                            <button class="flex-1 lg:flex-none justify-center items-center gap-2 px-4 py-2.5 border border-gray-200 bg-white rounded-xl text-gray-600 font-bold text-sm hover:bg-gray-50 hover:text-gray-900 transition-colors shadow-sm">
+                                <i class="ph-bold ph-file-pdf text-lg"></i> Nota Fiscal
+                            </button>
+                            <button class="flex-1 lg:flex-none justify-center items-center gap-2 px-4 py-2.5 bg-brand-600 text-white rounded-xl font-bold text-sm hover:bg-brand-700 shadow-lg shadow-brand-500/20 transition-all">
+                                <i class="ph-bold ph-whatsapp-logo text-lg"></i> Ajuda
+                            </button>
+                        </div>
                     </div>
-                    <div class="divide-y divide-gray-100">
-                        @for (item of items; track item.name) {
-                            <div class="p-6 flex items-center gap-4">
-                                <div class="w-16 h-16 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden shrink-0">
-                                    <!-- Ajuste aqui: item.images[0] em vez de item.image -->
-                                    <img [src]="item.images[0]" [alt]="item.name" class="w-full h-full object-cover">
+                </div>
+                
+                <!-- Timeline de Rastreamento (Com Datas e Detalhes) -->
+                @if (order.status !== 'CANCELADO') {
+                    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 mb-8 overflow-hidden hidden md:block">
+                        <div class="flex items-center gap-2 mb-10">
+                            <i class="ph-fill ph-truck text-brand-600 text-xl"></i>
+                            <h3 class="font-bold text-gray-900">Linha do Tempo</h3>
+                        </div>
+                        
+                        <div class="relative px-4">
+                            <!-- Linha de Fundo -->
+                            <div class="absolute top-5 left-0 w-full h-1 bg-gray-100 rounded-full -z-10"></div>
+                            <!-- Barra de Progresso Dinâmica -->
+                            <div class="absolute top-5 left-0 h-1 bg-brand-500 rounded-full -z-10 transition-all duration-1000 ease-out shadow-sm" 
+                                 [style.width.%]="progressPercentage()"></div>
+                            
+                            <div class="relative flex justify-between z-10">
+                                @for (step of timelineSteps(); track step.label) {
+                                    <div class="flex flex-col items-center gap-3 text-center w-32 group cursor-default">
+                                        <!-- Ícone do Passo -->
+                                        @if (step.status === 'completed') {
+                                            <div class="w-10 h-10 rounded-full bg-brand-600 text-white flex items-center justify-center border-4 border-white shadow-md ring-2 ring-brand-100 transition-all group-hover:scale-110 relative z-10">
+                                                <i class="ph-bold ph-check text-lg"></i>
+                                            </div>
+                                        } @else if (step.status === 'current') {
+                                            <div class="w-10 h-10 rounded-full bg-white text-brand-600 flex items-center justify-center border-4 border-brand-100 shadow-md ring-2 ring-brand-500 animate-pulse relative z-10">
+                                                <i [class]="'ph-fill ' + step.icon + ' text-lg'"></i>
+                                            </div>
+                                        } @else {
+                                            <div class="w-10 h-10 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center border-4 border-white shadow-sm relative z-10">
+                                                <i [class]="'ph-bold ' + step.icon + ' text-lg'"></i>
+                                            </div>
+                                        }
+
+                                        <!-- Textos -->
+                                        <div class="flex flex-col items-center">
+                                            <p class="text-xs font-bold uppercase tracking-wide"
+                                               [ngClass]="{
+                                                 'text-brand-700': step.status === 'completed',
+                                                 'text-brand-600': step.status === 'current',
+                                                 'text-gray-400': step.status === 'pending'
+                                               }">
+                                                {{ step.label }}
+                                            </p>
+                                            
+                                            <!-- Data ou Info Extra -->
+                                            @if (step.dateOrInfo) {
+                                                <span class="text-[10px] mt-1 font-medium bg-gray-100 px-2 py-0.5 rounded-full text-gray-600 border border-gray-200">
+                                                    {{ step.dateOrInfo }}
+                                                </span>
+                                            } @else {
+                                                @if (step.status === 'completed') {
+                                                    <span class="text-[10px] text-gray-400 mt-1">Concluído</span>
+                                                } @else if (step.status === 'current') {
+                                                    <span class="text-[10px] text-brand-500 mt-1 animate-pulse">Em andamento</span>
+                                                } @else {
+                                                    <span class="text-[10px] text-gray-300 mt-1">Aguardando</span>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+                
+                <div class="flex flex-col lg:flex-row gap-8">
+                    
+                    <!-- Lista de Produtos -->
+                    <div class="w-full lg:w-2/3 space-y-6">
+                        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                            <div class="p-6 border-b border-gray-100 bg-gray-50/30 flex justify-between items-center">
+                                <h3 class="font-bold text-gray-900 flex items-center gap-2">
+                                    <i class="ph-fill ph-basket text-brand-600"></i> Itens do Pedido
+                                </h3>
+                                <span class="text-xs font-medium text-gray-500 bg-white px-2 py-1 rounded-lg border border-gray-200">
+                                    {{ items.length }} produto(s)
+                                </span>
+                            </div>
+                            <div class="divide-y divide-gray-100">
+                                @for (item of items; track item.nomeProduto) {
+                                    <div class="p-6 flex flex-col sm:flex-row items-center gap-5 hover:bg-gray-50 transition-colors group">
+                                        <!-- Imagem Gerada (Avatar) -->
+                                        <div class="w-20 h-20 bg-white rounded-xl border border-gray-200 overflow-hidden shrink-0 flex items-center justify-center relative shadow-sm">
+                                            <img [src]="'https://ui-avatars.com/api/?name=' + item.nomeProduto + '&background=f3f4f6&color=4b5563&size=128&font-size=0.35'" 
+                                                 [alt]="item.nomeProduto" 
+                                                 class="w-full h-full object-cover">
+                                        </div>
+
+                                        <div class="flex-1 min-w-0 space-y-1 text-center sm:text-left">
+                                            <h4 class="font-bold text-gray-900 text-base leading-tight line-clamp-2" [title]="item.nomeProduto">
+                                                {{ item.nomeProduto }}
+                                            </h4>
+                                            <div class="flex flex-wrap justify-center sm:justify-start items-center gap-2 text-xs text-gray-500">
+                                                <span class="bg-gray-100 px-2 py-0.5 rounded text-gray-600 font-mono border border-gray-200">
+                                                    REF: {{ item.nomeProduto.substring(0,3).toUpperCase() }}
+                                                </span>
+                                                <span class="w-1 h-1 bg-gray-300 rounded-full hidden sm:block"></span>
+                                                <span>Unitário: {{ item.precoUnitario | currency:'BRL' }}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center gap-6 w-full sm:w-auto justify-between sm:justify-end">
+                                            <div class="text-right">
+                                                <span class="text-xs text-gray-500 font-medium block">Qtd: {{ item.quantidade }}</span>
+                                                <span class="font-bold text-gray-900 text-lg block">{{ item.subTotal | currency:'BRL' }}</span>
+                                            </div>
+
+                                            <!-- Botão Ver Produto -->
+                                            <button class="bg-white border border-gray-200 text-gray-500 hover:text-brand-600 hover:border-brand-200 p-2 rounded-lg transition-colors shadow-sm group-hover:shadow" 
+                                                    title="Ver Produto">
+                                                <i class="ph-bold ph-arrow-right"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sidebar: Resumo e Dados -->
+                    <div class="w-full lg:w-1/3 space-y-6">
+                        
+                        <!-- Resumo Financeiro -->
+                        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
+                            <h3 class="font-bold text-gray-900 mb-6 flex items-center gap-2">
+                                <i class="ph-fill ph-receipt text-brand-600"></i> Resumo Financeiro
+                            </h3>
+                            
+                            <div class="space-y-3 text-sm text-gray-600 border-b border-gray-100 pb-6 mb-6">
+                                <div class="flex justify-between items-center">
+                                    <span>Subtotal</span>
+                                    <span class="font-medium text-gray-900">{{ (order.valorTotal - (order.entrega?.valorFrete || 0) + (order.valorDesconto || 0)) | currency:'BRL' }}</span>
                                 </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wider mb-0.5">{{ item.category }}</p>
-                                    <h4 class="font-bold text-gray-800 text-sm truncate">{{ item.name }}</h4>
-                                    <p class="text-xs text-gray-500 mt-1">Qtd: {{ item.quantity }}</p>
+                                
+                                <div class="flex justify-between items-center">
+                                    <span>Frete</span>
+                                    @if (order.entrega?.valorFrete && order.entrega!.valorFrete > 0) {
+                                        <span class="text-gray-900 font-medium">{{ order.entrega!.valorFrete | currency:'BRL' }}</span>
+                                    } @else {
+                                        <span class="text-green-600 font-bold text-xs bg-green-50 px-2 py-1 rounded">GRÁTIS</span>
+                                    }
                                 </div>
+                                
+                                @if (order.valorDesconto && order.valorDesconto > 0) {
+                                    <div class="flex justify-between items-center text-green-600">
+                                        <span class="flex items-center gap-1"><i class="ph-bold ph-tag"></i> Desconto</span>
+                                        <span class="font-bold">- {{ order.valorDesconto | currency:'BRL' }}</span>
+                                    </div>
+                                }
+                            </div>
+                            
+                            <div class="flex justify-between items-end">
+                                <span class="font-bold text-gray-900 text-lg">Total</span>
                                 <div class="text-right">
-                                    <span class="font-bold text-gray-900">R$ {{ item.price | number:'1.2-2' }}</span>
+                                    <span class="text-2xl font-extrabold text-orange-600 block leading-none">
+                                        {{ order.valorTotal | currency:'BRL' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Endereço de Entrega -->
+                        @if (order.entrega) {
+                            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 relative overflow-hidden">
+                                <!-- Decoração -->
+                                <i class="ph-duotone ph-map-pin absolute -right-6 -bottom-6 text-9xl text-gray-50 rotate-12 opacity-50"></i>
+                                
+                                <div class="flex items-center gap-3 mb-4 relative z-10">
+                                    <div class="bg-blue-50 p-2 rounded-lg text-blue-600"><i class="ph-fill ph-map-pin"></i></div>
+                                    <h3 class="font-bold text-gray-900">Endereço de Entrega</h3>
+                                </div>
+                                
+                                <div class="relative z-10 space-y-4">
+                                    <p class="text-sm text-gray-600 leading-relaxed bg-gray-50 p-4 rounded-xl border border-gray-100">
+                                        <span class="block font-bold text-gray-800 mb-1">Destinatário</span>
+                                        {{ order.entrega.logradouro }}, {{ order.entrega.numero }}
+                                        @if(order.entrega.complemento) { - {{ order.entrega.complemento }} }
+                                        <br>
+                                        {{ order.entrega.bairro }}<br>
+                                        {{ order.entrega.cidade }} - {{ order.entrega.uf }}<br>
+                                        <span class="font-mono text-xs text-gray-500 mt-2 block pt-2 border-t border-gray-200">CEP: {{ order.entrega.cep }}</span>
+                                    </p>
+                                    
+                                    @if (order.entrega.codigoRastreio) {
+                                        <div class="pt-2">
+                                            <p class="text-xs font-bold text-gray-400 uppercase mb-1 ml-1">Rastreio</p>
+                                            <div class="flex items-center gap-2 bg-white p-2 rounded-lg border border-brand-200 w-full shadow-sm text-brand-700">
+                                                <i class="ph-bold ph-barcode text-xl"></i>
+                                                <span class="font-mono font-bold tracking-widest select-all flex-1 text-center">{{ order.entrega.codigoRastreio }}</span>
+                                                <button class="text-gray-400 hover:text-brand-600" title="Copiar"><i class="ph-bold ph-copy"></i></button>
+                                            </div>
+                                        </div>
+                                    }
                                 </div>
                             </div>
                         }
+                        
+                        <!-- Pagamento -->
+                        @if (order.pagamento; as payment) {
+                            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 relative overflow-hidden">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="bg-purple-50 p-2 rounded-lg text-purple-600">
+                                        <!-- Ícone Dinâmico -->
+                                        @switch (payment.metodo) {
+                                            @case ('PIX') { <i class="ph-fill ph-qr-code"></i> }
+                                            @case ('BOLETO') { <i class="ph-fill ph-barcode"></i> }
+                                            @default { <i class="ph-fill ph-credit-card"></i> }
+                                        }
+                                    </div>
+                                    <h3 class="font-bold text-gray-900">Pagamento</h3>
+                                </div>
+                                
+                                <div class="space-y-4">
+                                    <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                        <span class="text-sm font-medium text-gray-700">{{ payment.metodo.replace('_', ' ') }}</span>
+                                        
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide border"
+                                              [ngClass]="{
+                                                'bg-green-50 text-green-700 border-green-200': payment.status === 'APROVADO',
+                                                'bg-yellow-50 text-yellow-700 border-yellow-200': payment.status === 'PENDENTE',
+                                                'bg-red-50 text-red-700 border-red-200': payment.status === 'RECUSADO' || payment.status === 'CANCELADO'
+                                              }">
+                                            {{ payment.status }}
+                                        </span>
+                                    </div>
+
+                                    @if (payment.numeroParcelas > 1) {
+                                        <p class="text-xs text-gray-500 flex items-center gap-2">
+                                            <i class="ph-bold ph-calendar-blank"></i>
+                                            Parcelado em <span class="font-bold text-gray-900">{{ payment.numeroParcelas }}x</span> de 
+                                            {{ (payment.valor / payment.numeroParcelas) | currency:'BRL' }}
+                                        </p>
+                                    } @else {
+                                        <p class="text-xs text-gray-500 flex items-center gap-2">
+                                            <i class="ph-bold ph-check-circle"></i>
+                                            Pagamento à vista
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        
                     </div>
                 </div>
+                
             </div>
-            
-            <!-- Sidebar: Resumo e Endereço -->
-            <div class="w-full lg:w-1/3 space-y-6">
-                
-                <!-- Resumo Financeiro -->
-                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
-                    <h3 class="font-bold text-gray-900 mb-4">Resumo Financeiro</h3>
-                    <div class="space-y-2 text-sm text-gray-600 border-b border-gray-100 pb-4 mb-4">
-                        <div class="flex justify-between"><span>Subtotal</span><span>R$ {{ subtotal | number:'1.2-2' }}</span></div>
-                        <div class="flex justify-between"><span>Frete</span><span class="text-green-600 font-bold">Grátis</span></div>
-                        <div class="flex justify-between"><span>Desconto</span><span class="text-green-600">- R$ {{ discount | number:'1.2-2' }}</span></div>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="font-bold text-gray-900">Total Pago</span>
-                        <span class="text-xl font-extrabold text-orange-600">R$ {{ total | number:'1.2-2' }}</span>
-                    </div>
-                </div>
-                
-                <!-- Informações de Entrega -->
-                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="bg-gray-100 p-2 rounded-lg text-gray-600"><i class="ph-bold ph-map-pin"></i></div>
-                        <h3 class="font-bold text-gray-900">Endereço de Entrega</h3>
-                    </div>
-                    <p class="text-sm text-gray-600 leading-relaxed">
-                        <span class="font-bold text-gray-800 block">Carlos Silva</span>
-                        Rua das Flores, 123 - Centro<br>
-                        São Paulo - SP<br>
-                        CEP: 01000-000
-                    </p>
-                </div>
-                
-                <!-- Forma de Pagamento -->
-                <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
-                    <div class="flex items-center gap-3 mb-4">
-                        <div class="bg-gray-100 p-2 rounded-lg text-gray-600"><i class="ph-bold ph-credit-card"></i></div>
-                        <h3 class="font-bold text-gray-900">Pagamento</h3>
-                    </div>
-                    <p class="text-sm text-gray-600">
-                        Cartão de Crédito<br>
-                        Mastercard terminado em <strong>8892</strong><br>
-                        Parcelado em 3x
-                    </p>
-                </div>
-                
+        </main>
+    }
+    @else {
+        <!-- 3. Erro: Produto não encontrado -->
+        <div class="h-screen flex flex-col items-center justify-center text-gray-500 bg-gray-50 px-4 text-center">
+            <div class="bg-white p-6 rounded-full shadow-sm mb-4">
+                <i class="ph-duotone ph-warning-circle text-4xl text-red-500"></i>
             </div>
+            <h2 class="text-xl font-bold text-gray-900 mb-2">Pedido não encontrado</h2>
+            <p class="mb-6 max-w-md">Não conseguimos localizar os detalhes deste pedido. Verifique se o ID está correto.</p>
+            <a routerLink="/perfil" fragment="pedidos" class="bg-brand-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-700 transition-all shadow-lg shadow-brand-500/20">
+                Voltar para Meus Pedidos
+            </a>
         </div>
-        
-    </div>
-</main>
+    }
+}

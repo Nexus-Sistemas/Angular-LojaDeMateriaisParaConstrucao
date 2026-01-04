@@ -1,4 +1,13 @@
-@if (product) {
+<!-- 1. Estado de Carregamento -->
+@if (loading()) {
+  <div class="h-screen flex flex-col items-center justify-center text-gray-500 gap-4">
+    <i class="ph-duotone ph-spinner animate-spin text-4xl text-brand-500"></i>
+    <p class="animate-pulse">Carregando detalhes do produto...</p>
+  </div>
+} 
+@else {
+  <!-- 2. Verifica se o produto existe e cria o alias 'p' -->
+  @if (product(); as p) {
     <main class="container mx-auto px-4 pt-28 pb-12 animate-fade-in">
         
         <!-- Navegação Breadcrumb -->
@@ -7,9 +16,11 @@
                 <i class="ph-fill ph-house"></i> Home
             </a>
             <span class="mx-2 text-gray-300">/</span>
-            <a class="hover:text-brand-600 transition-colors cursor-pointer">{{ product.category }}</a>
+            <a class="hover:text-brand-600 transition-colors cursor-pointer">
+                {{ p.categoria?.nome || 'Geral' }}
+            </a>
             <span class="mx-2 text-gray-300">/</span>
-            <span class="text-gray-900 font-medium truncate">{{ product.name }}</span>
+            <span class="text-gray-900 font-medium truncate">{{ p.titulo }}</span>
         </nav>
         
         <!-- Seção Principal do Produto -->
@@ -20,23 +31,23 @@
                 
                 <!-- Container da Imagem Principal (ZOOM) -->
                 <div 
-                class="relative w-full aspect-[4/3] sm:aspect-square md:aspect-[4/3] lg:aspect-square bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 group cursor-zoom-in"
+                class="relative w-full aspect-[4/3] sm:aspect-square md:aspect-[4/3] lg:aspect-square bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 group cursor-zoom-in flex items-center justify-center"
                 (mousemove)="onMouseMove($event)"
-                (mouseleave)="onMouseLeave()"
-                >
+                (mouseleave)="onMouseLeave()">
+                
+                <!-- Imagem Real -->
                 <img 
-                [src]="currentImage" 
-                [alt]="product.name"
+                [src]="currentImage()" 
+                [alt]="p.titulo"
                 class="w-full h-full object-cover transition-transform duration-200 ease-out"
-                [style.transform]="zoomTransform"
-                [style.transform-origin]="zoomOrigin"
-                >
+                [style.transform]="zoomTransform()"
+                [style.transform-origin]="zoomOrigin()">
                 
                 <!-- Badges -->
-                <div class="absolute top-4 left-4 flex flex-col gap-2 pointer-events-none">
-                    @if (product.discount) {
+                <div class="absolute top-4 left-4 flex flex-col gap-2 pointer-events-none z-10">
+                    @if (p.precoPromocional) {
                         <span class="bg-brand-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
-                            {{ discountValue }}% OFF
+                            {{ discountPercentage() }}% OFF
                         </span>
                     }
                     <span class="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">
@@ -49,14 +60,13 @@
                 </button>
             </div>
             
-            <!-- Thumbnails -->
+            <!-- Thumbnails (Mockados) -->
             <div class="grid grid-cols-5 gap-3">
-                @for (img of product.images; track $index) {
+                @for (img of mockImages; track $index) {
                     <div 
                     (click)="changeImage(img)"
                     class="aspect-square rounded-lg overflow-hidden border-2 cursor-pointer transition-all"
-                    [ngClass]="currentImage === img ? 'border-brand-500' : 'border-transparent hover:border-gray-300'"
-                    >
+                    [ngClass]="currentImage() === img ? 'border-brand-500' : 'border-transparent hover:border-gray-300'">
                     <img [src]="img" class="w-full h-full object-cover">
                 </div>
             }
@@ -68,239 +78,226 @@
         <div class="mb-6 border-b border-gray-100 pb-6">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-xs font-bold text-brand-600 bg-brand-50 px-2 py-1 rounded uppercase tracking-wider">
-                    {{ product.brand }}
+                    {{ productExtras.brand }}
                 </span>
-                <span class="text-xs text-gray-400">Ref: {{ product.id | number:'4.0' }}</span>
+                <span class="text-xs text-gray-400 font-mono">Ref: {{ p.codigoControle }}</span>
             </div>
             <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold text-gray-900 leading-tight mb-3">
-                {{ product.name }}
+                {{ p.titulo }}
             </h1>
             
             <div class="flex flex-wrap items-center gap-4 text-sm">
                 <div class="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded-lg border border-yellow-100">
-                    <div class="flex text-lg gap-0.5">
-                        @for (star of [1,2,3,4,5]; track star) {
-                            @if (product.rating >= star) {
-                                <i class="ph-fill ph-star text-yellow-400"></i>
-                            } @else if (product.rating > star - 1) {
-                                <div class="relative inline-block text-gray-300">
-                                    <i class="ph-fill ph-star"></i>
-                                    <div class="absolute top-0 left-0 overflow-hidden text-yellow-400" 
-                                    [style.width.%]="(product.rating - (star - 1)) * 100">
-                                    <i class="ph-fill ph-star"></i>
-                                </div>
-                            </div>
-                        } @else {
-                            <i class="ph-fill ph-star text-gray-300"></i>
-                        }
-                    }
-                </div>
-                <span class="font-bold text-gray-700 ml-1">{{ product.rating }}</span>
-                <span class="text-gray-400 text-xs">({{ productExtras.reviews.length }} avaliações)</span>
-            </div>
-            
-            @if (product.inStock) {
-                <span class="flex items-center gap-1.5 font-bold px-3 py-1 rounded-full bg-green-50 border border-green-100 text-xs text-green-700">
-                    <i class="ph-fill ph-check-circle"></i> Disponível
-                </span>
-            } @else {
-                <span class="flex items-center gap-1.5 font-bold px-3 py-1 rounded-full bg-red-50 border border-red-100 text-xs text-red-500">
-                    <i class="ph-fill ph-x-circle"></i> Indisponível
-                </span>
-            }
-        </div>
-    </div>
-    
-    <!-- Preço -->
-    <div class="mb-8">
-        <div class="flex items-baseline gap-3 flex-wrap">
-            @if (product.discount) {
-                <span class="text-gray-400 line-through text-lg">R$ {{ product.price | number:'1.2-2' }}</span>
-            }
-            <span class="text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight">
-                R$ {{ finalPrice | number:'1.2-2' }}
-            </span>
-            @if (product.discount) {
-                <span class="text-green-600 bg-green-50 px-2 py-1 rounded text-xs font-bold self-start mt-2">
-                    {{ discountValue }}% OFF
-                </span>
-            }
-        </div>
-        <p class="text-gray-500 text-sm mt-2 flex items-center gap-2">
-            <i class="ph-fill ph-credit-card text-brand-500"></i>
-            Até <span class="font-bold text-gray-900">10x sem juros</span> no cartão
-        </p>
-        <p class="text-brand-700 text-sm mt-1 bg-brand-50 w-fit px-2 py-0.5 rounded font-medium">
-            5% de desconto no Pix
-        </p>
-    </div>
-    
-    <!-- Ações -->
-    <div class="flex flex-col sm:flex-row gap-4 mb-8">
-        <div class="flex items-center border-2 border-gray-200 rounded-xl bg-white w-fit hover:border-gray-300 transition-colors">
-            <button class="w-12 h-12 flex items-center justify-center text-gray-500 hover:text-brand-600 transition-colors" (click)="updateQty(-1)">
-                <i class="ph-bold ph-minus"></i>
-            </button>
-            <input type="number" [value]="quantity" readonly class="w-10 text-center font-bold text-lg text-gray-900 outline-none border-none p-0 bg-transparent">
-            <button class="w-12 h-12 flex items-center justify-center text-gray-500 hover:text-brand-600 transition-colors" (click)="updateQty(1)">
-                <i class="ph-bold ph-plus"></i>
-            </button>
-        </div>
-        <button 
-        (click)="addToCart()"
-        [disabled]="!product.inStock"
-        class="flex-1 bg-gray-900 hover:bg-brand-600 text-white font-bold h-14 rounded-xl shadow-lg shadow-gray-200 hover:shadow-brand-200 transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400"
-        >
-        <i class="ph-bold ph-shopping-cart text-2xl"></i>
-        <span>{{ product.inStock ? 'Adicionar ao Carrinho' : 'Sem Estoque' }}</span>
-    </button>
-</div>
-
-<!-- Calculadora de Frete -->
-<div class="bg-gray-50 rounded-2xl p-5 border border-gray-200">
-    <h3 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
-        <i class="ph-fill ph-truck text-brand-500"></i> Calcular Frete e Prazo
-    </h3>
-    <div class="flex gap-2 mb-4">
-        <input [(ngModel)]="zipCode" type="text" placeholder="00000-000" maxlength="9" class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none">
-        <button (click)="calculateShipping()" class="bg-white border border-gray-300 text-gray-700 font-bold px-4 py-2 rounded-lg text-sm hover:bg-gray-100 transition-colors">Calcular</button>
-    </div>
-    
-    @if (shippingResult) {
-        <div class="space-y-2 animate-fade-in">
-            @for (opt of shippingResult; track opt.type) {
-                <div class="flex justify-between items-center bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-brand-100 text-brand-600 p-1.5 rounded">
-                            <i [class]="opt.days < 4 ? 'ph-bold ph-lightning' : 'ph-bold ph-truck'"></i>
-                        </div>
-                        <div>
-                            <p class="text-xs font-bold text-gray-800">{{ opt.type }}</p>
-                            <p class="text-[10px] text-gray-500">Chega em até {{ opt.days }} dias úteis</p>
-                        </div>
+                    <div class="flex text-lg gap-0.5 text-yellow-400">
+                        <i class="ph-fill ph-star"></i>
+                        <i class="ph-fill ph-star"></i>
+                        <i class="ph-fill ph-star"></i>
+                        <i class="ph-fill ph-star"></i>
+                        <i class="ph-fill ph-star-half"></i>
                     </div>
-                    <span class="text-sm font-bold text-gray-900">R$ {{ opt.price | number:'1.2-2' }}</span>
+                    <span class="font-bold text-gray-700 ml-1">{{ productExtras.rating }}</span>
+                    <span class="text-gray-400 text-xs">({{ productExtras.reviews.length }} avaliações)</span>
                 </div>
-            }
+                
+                @if (p.estoque > 0) {
+                    <span class="flex items-center gap-1.5 font-bold px-3 py-1 rounded-full bg-green-50 border border-green-100 text-xs text-green-700">
+                        <i class="ph-fill ph-check-circle"></i> Disponível ({{ p.estoque }})
+                    </span>
+                } @else {
+                    <span class="flex items-center gap-1.5 font-bold px-3 py-1 rounded-full bg-red-50 border border-red-100 text-xs text-red-500">
+                        <i class="ph-fill ph-x-circle"></i> Indisponível
+                    </span>
+                }
+            </div>
         </div>
-    }
-    
-    <a href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank" class="text-xs text-brand-600 hover:underline mt-2 block">Não sei meu CEP</a>
-</div>
-</div>
-</div>
-
-<!-- NOVA SEÇÃO DE ABAS REESTILIZADA -->
-<div class="mt-12 bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-    <!-- Cabeçalho das Abas -->
-    <div class="border-b border-gray-100 bg-gray-50/50">
-        <nav class="flex -mb-px" aria-label="Tabs">
-            <button 
-            (click)="setActiveTab('overview')"
-            class="group relative min-w-[120px] py-4 px-6 text-sm font-bold text-center hover:bg-gray-50 focus:outline-none transition-colors"
-            [class.text-brand-600]="activeTab === 'overview'"
-            [class.text-gray-500]="activeTab !== 'overview'"
-            >
-            Visão Geral
-            <span 
-            class="absolute bottom-0 left-0 w-full h-0.5 bg-brand-500 transition-transform duration-300 ease-out origin-left"
-            [class.scale-x-100]="activeTab === 'overview'"
-            [class.scale-x-0]="activeTab !== 'overview'"
-            ></span>
-        </button>
         
-        <button 
-        (click)="setActiveTab('specs')"
-        class="group relative min-w-[120px] py-4 px-6 text-sm font-bold text-center hover:bg-gray-50 focus:outline-none transition-colors"
-        [class.text-brand-600]="activeTab === 'specs'"
-        [class.text-gray-500]="activeTab !== 'specs'"
-        >
-        Especificações
-        <span 
-        class="absolute bottom-0 left-0 w-full h-0.5 bg-brand-500 transition-transform duration-300 ease-out origin-left"
-        [class.scale-x-100]="activeTab === 'specs'"
-        [class.scale-x-0]="activeTab !== 'specs'"
-        ></span>
-    </button>
-    
-    <button 
-    (click)="setActiveTab('reviews')"
-    class="group relative min-w-[120px] py-4 px-6 text-sm font-bold text-center hover:bg-gray-50 focus:outline-none transition-colors"
-    [class.text-brand-600]="activeTab === 'reviews'"
-    [class.text-gray-500]="activeTab !== 'reviews'"
-    >
-    Avaliações ({{ productExtras.reviews.length }})
-    <span 
-    class="absolute bottom-0 left-0 w-full h-0.5 bg-brand-500 transition-transform duration-300 ease-out origin-left"
-    [class.scale-x-100]="activeTab === 'reviews'"
-    [class.scale-x-0]="activeTab !== 'reviews'"
-    ></span>
-</button>
-</nav>
-</div>
-
-<!-- Conteúdo das Abas -->
-<div class="p-6 lg:p-10">
-    <!-- Conteúdo Visão Geral -->
-    @if (activeTab === 'overview') {
-        <div class="animate-fade-in max-w-4xl mx-auto space-y-16">
-            <div class="flex flex-col md:flex-row items-center gap-10">
-                <div class="md:w-1/2">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Qualidade Superior</h2>
-                    <p class="text-gray-600 leading-relaxed">{{ product.description }}</p>
-                </div>
-                <div class="md:w-1/2"><img [src]="product.images[0]" class="rounded-2xl shadow-lg w-full h-64 object-cover"></div>
+        <!-- Preço -->
+        <div class="mb-8">
+            <div class="flex items-baseline gap-3 flex-wrap">
+                @if (p.precoPromocional) {
+                    <span class="text-gray-400 line-through text-lg">{{ p.preco | currency:'BRL' }}</span>
+                }
+                <span class="text-4xl lg:text-5xl font-extrabold text-gray-900 tracking-tight">
+                    {{ finalPrice() | currency:'BRL' }}
+                </span>
+                @if (p.precoPromocional) {
+                    <span class="text-green-600 bg-green-50 px-2 py-1 rounded text-xs font-bold self-start mt-2">
+                        {{ discountPercentage() }}% OFF
+                    </span>
+                }
             </div>
+            <p class="text-gray-500 text-sm mt-2 flex items-center gap-2">
+                <i class="ph-fill ph-credit-card text-brand-500"></i>
+                Até <span class="font-bold text-gray-900">10x sem juros</span> no cartão
+            </p>
+            <p class="text-brand-700 text-sm mt-1 bg-brand-50 w-fit px-2 py-0.5 rounded font-medium">
+                5% de desconto no Pix
+            </p>
         </div>
-    }
+        
+        <!-- Ações -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-8">
+            <div class="flex items-center border-2 border-gray-200 rounded-xl bg-white w-fit hover:border-gray-300 transition-colors">
+                <button class="w-12 h-12 flex items-center justify-center text-gray-500 hover:text-brand-600 transition-colors" (click)="updateQty(-1)">
+                    <i class="ph-bold ph-minus"></i>
+                </button>
+                <input type="number" [value]="quantity()" readonly class="w-10 text-center font-bold text-lg text-gray-900 outline-none border-none p-0 bg-transparent">
+                <button class="w-12 h-12 flex items-center justify-center text-gray-500 hover:text-brand-600 transition-colors" (click)="updateQty(1)">
+                    <i class="ph-bold ph-plus"></i>
+                </button>
+            </div>
+            <button 
+            (click)="addToCart()"
+            [disabled]="p.estoque <= 0"
+            class="flex-1 bg-gray-900 hover:bg-brand-600 text-white font-bold h-14 rounded-xl shadow-lg shadow-gray-200 hover:shadow-brand-200 transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400"
+            >
+            <i class="ph-bold ph-shopping-cart text-2xl"></i>
+            <span>{{ p.estoque > 0 ? 'Adicionar ao Carrinho' : 'Sem Estoque' }}</span>
+        </button>
+    </div>
     
-    <!-- Conteúdo Specs -->
-    @if (activeTab === 'specs') {
-        <div class="animate-fade-in max-w-3xl mx-auto">
-            <table class="w-full text-sm text-left">
-                <tbody class="divide-y divide-gray-100 border border-gray-100 rounded-lg overflow-hidden">
-                    @for (spec of productExtras.specs; track spec.label; let odd = $odd) {
-                        <tr [class.bg-gray-50]="!odd" [class.bg-white]="odd">
-                            <td class="py-4 px-6 font-bold text-gray-700 w-1/3">{{ spec.label }}</td>
-                            <td class="py-4 px-6 text-gray-600">{{ spec.value }}</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+    <!-- Calculadora de Frete -->
+    <div class="bg-gray-50 rounded-2xl p-5 border border-gray-200">
+        <h3 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
+            <i class="ph-fill ph-truck text-brand-500"></i> Calcular Frete e Prazo
+        </h3>
+        <div class="flex gap-2 mb-4">
+            <input 
+              [ngModel]="zipCode()" 
+              (ngModelChange)="zipCode.set($event)" 
+              type="text" 
+              mask="00000-000" 
+              placeholder="00000-000" 
+              class="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none">
+            <button (click)="calculateShipping()" class="bg-white border border-gray-300 text-gray-700 font-bold px-4 py-2 rounded-lg text-sm hover:bg-gray-100 transition-colors">Calcular</button>
         </div>
-    }
-    
-    <!-- Conteúdo Reviews -->
-    @if (activeTab === 'reviews') {
-        <div class="animate-fade-in max-w-3xl mx-auto space-y-6">
-            @for (review of productExtras.reviews; track review.user) {
-                <div class="border-b border-gray-100 pb-6 last:border-0">
-                    <div class="flex items-center justify-between mb-2">
-                        <div class="flex items-center gap-2">
-                            <div class="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold text-sm shadow-sm">{{ review.user.substring(0,2) }}</div>
+        
+        @if (shippingResult()) {
+            <div class="space-y-2 animate-fade-in">
+                @for (opt of shippingResult(); track opt.type) {
+                    <div class="flex justify-between items-center bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-brand-100 text-brand-600 p-1.5 rounded">
+                                <i [class]="opt.days < 4 ? 'ph-bold ph-lightning' : 'ph-bold ph-truck'"></i>
+                            </div>
                             <div>
-                                <span class="font-bold text-gray-900 text-sm block">{{ review.user }}</span>
-                                <div class="flex text-yellow-400 text-xs gap-0.5">
-                                    @for (star of [1,2,3,4,5]; track star) {
-                                        @if (review.rating >= star) { <i class="ph-fill ph-star"></i> } @else { <i class="ph-fill ph-star text-gray-300"></i> }
-                                    }
-                                </div>
+                                <p class="text-xs font-bold text-gray-800">{{ opt.type }}</p>
+                                <p class="text-xs text-gray-500">Chega em até {{ opt.days }} dias úteis</p>
                             </div>
                         </div>
-                        <span class="text-xs text-gray-400 font-medium">{{ review.date }}</span>
+                        <span class="text-sm font-bold text-gray-900">{{ opt.price | currency:'BRL' }}</span>
                     </div>
-                    <p class="text-gray-600 text-sm leading-relaxed mt-3 pl-12">{{ review.text }}</p>
-                </div>
-            }
-        </div>
-    }
-</div>
-</div>
-</main>
-} @else {
-    <!-- Estado de Carregamento / Erro -->
-    <div class="h-screen flex flex-col items-center justify-center text-gray-500 gap-4">
-        <i class="ph-duotone ph-spinner animate-spin text-4xl text-brand-500"></i>
-        <p>Carregando produto...</p>
+                }
+            </div>
+        }
+        
+        <a href="https://buscacepinter.correios.com.br/app/endereco/index.php" target="_blank" class="text-xs text-brand-600 hover:underline mt-2 block">Não sei meu CEP</a>
     </div>
+  </div>
+  </div>
+  
+  <!-- SEÇÃO DE ABAS (Overview, Specs, Reviews) -->
+  <div class="mt-12 bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="border-b border-gray-100 bg-gray-50/50">
+        <nav class="flex -mb-px">
+            <button (click)="setActiveTab('overview')" class="group relative min-w-[120px] py-4 px-6 text-sm font-bold text-center hover:bg-gray-50 transition-colors" [class.text-brand-600]="activeTab() === 'overview'" [class.text-gray-500]="activeTab() !== 'overview'">
+                Visão Geral
+                <span class="absolute bottom-0 left-0 w-full h-0.5 bg-brand-500 transition-transform duration-300" [class.scale-x-100]="activeTab() === 'overview'" [class.scale-x-0]="activeTab() !== 'overview'"></span>
+            </button>
+            <button (click)="setActiveTab('specs')" class="group relative min-w-[120px] py-4 px-6 text-sm font-bold text-center hover:bg-gray-50 transition-colors" [class.text-brand-600]="activeTab() === 'specs'" [class.text-gray-500]="activeTab() !== 'specs'">
+                Especificações
+                <span class="absolute bottom-0 left-0 w-full h-0.5 bg-brand-500 transition-transform duration-300" [class.scale-x-100]="activeTab() === 'specs'" [class.scale-x-0]="activeTab() !== 'specs'"></span>
+            </button>
+            <button (click)="setActiveTab('reviews')" class="group relative min-w-[120px] py-4 px-6 text-sm font-bold text-center hover:bg-gray-50 transition-colors" [class.text-brand-600]="activeTab() === 'reviews'" [class.text-gray-500]="activeTab() !== 'reviews'">
+                Avaliações ({{ productExtras.reviews.length }})
+                <span class="absolute bottom-0 left-0 w-full h-0.5 bg-brand-500 transition-transform duration-300" [class.scale-x-100]="activeTab() === 'reviews'" [class.scale-x-0]="activeTab() !== 'reviews'"></span>
+            </button>
+        </nav>
+    </div>
+  
+    <div class="p-6 lg:p-10">
+        <!-- Conteúdo das Abas -->
+        @if (activeTab() === 'overview') {
+            <div class="animate-fade-in max-w-4xl mx-auto space-y-16">
+                <div class="flex flex-col md:flex-row items-center gap-10">
+                    <div class="md:w-1/2">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Detalhes do Produto</h2>
+                        <p class="text-gray-600 leading-relaxed">{{ p.descricao }}</p>
+                    </div>
+                    <div class="md:w-1/2">
+                        <div class="bg-gray-100 rounded-2xl h-64 flex items-center justify-center text-gray-300">
+                             <i class="ph-duotone ph-image text-8xl"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        
+        @if (activeTab() === 'specs') {
+            <div class="animate-fade-in max-w-3xl mx-auto">
+                <table class="w-full text-sm text-left">
+                    <tbody class="divide-y divide-gray-100 border border-gray-100 rounded-lg overflow-hidden">
+                        <!-- Specs Reais do DTO -->
+                        @if (p.dimensoes) {
+                            <tr class="bg-gray-50">
+                                <td class="py-4 px-6 font-bold text-gray-700 w-1/3">Dimensões</td>
+                                <td class="py-4 px-6 text-gray-600">{{ p.dimensoes }}</td>
+                            </tr>
+                        }
+                        @if (p.pesoKg) {
+                            <tr class="bg-white">
+                                <td class="py-4 px-6 font-bold text-gray-700 w-1/3">Peso</td>
+                                <td class="py-4 px-6 text-gray-600">{{ p.pesoKg }} kg</td>
+                            </tr>
+                        }
+                        <!-- Specs Mockadas -->
+                        @for (spec of productExtras.specs; track spec.label; let odd = $odd) {
+                            <tr [class.bg-gray-50]="odd" [class.bg-white]="!odd">
+                                <td class="py-4 px-6 font-bold text-gray-700 w-1/3">{{ spec.label }}</td>
+                                <td class="py-4 px-6 text-gray-600">{{ spec.value }}</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        
+        @if (activeTab() === 'reviews') {
+            <div class="animate-fade-in max-w-3xl mx-auto space-y-6">
+                @for (review of productExtras.reviews; track review.user) {
+                    <div class="border-b border-gray-100 pb-6 last:border-0">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center gap-2">
+                                <div class="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold text-sm shadow-sm">
+                                    {{ review.user.substring(0,2) }}
+                                </div>
+                                <div>
+                                    <span class="font-bold text-gray-900 text-sm block">{{ review.user }}</span>
+                                    <div class="flex text-yellow-400 text-xs gap-0.5">
+                                        @for (star of [1,2,3,4,5]; track star) {
+                                            @if (review.rating >= star) { <i class="ph-fill ph-star"></i> }
+                                            @else { <i class="ph-fill ph-star text-gray-300"></i> }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="text-xs text-gray-400 font-medium">{{ review.date }}</span>
+                        </div>
+                        <p class="text-gray-600 text-sm leading-relaxed mt-3 pl-12">{{ review.text }}</p>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+  </div>
+  </main>
+  }
+  @else {
+    <!-- 3. Caso Raro: Nem loading nem produto (ex: erro silencioso) -->
+    <div class="h-screen flex flex-col items-center justify-center text-red-500 gap-4">
+      <i class="ph-duotone ph-warning-circle text-4xl"></i>
+      <p>Produto não encontrado.</p>
+      <a routerLink="/" class="text-brand-600 hover:underline">Voltar para a loja</a>
+    </div>
+  }
 }
