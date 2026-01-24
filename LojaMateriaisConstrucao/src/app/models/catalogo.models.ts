@@ -79,7 +79,7 @@ export interface ProdutoRequest {
 export interface ProdutoFiltro {
     termo?: string;
     categoriaId?: string;
-    precoMin?: number;
-    precoMax?: number;
+    precoMin: number;
+    precoMax: number;
     apenasAtivos?: boolean;
 }

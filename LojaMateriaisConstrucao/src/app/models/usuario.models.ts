@@ -2,6 +2,11 @@ export interface Cliente {
     id: string;
     nome: string;
     email: string;
+    avatar?: string;
+    role: string;
+    tipo: string;
+    cpf?: string;
+    telefone?: string;
 }
 
 export interface Endereco {

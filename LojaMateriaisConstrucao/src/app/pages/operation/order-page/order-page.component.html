@@ -1,4 +1,3 @@
-<!-- 1. Estado de Carregamento -->
 @if (loading()) {
     <div class="h-screen flex flex-col items-center justify-center text-gray-500 gap-4 bg-gray-50">
         <div class="bg-white p-4 rounded-full shadow-sm">
@@ -8,15 +7,12 @@
     </div>
 } 
 @else {
-    <!-- 2. Conteúdo do Pedido -->
     @if (pedido(); as order) {
         <main class="font-sans antialiased text-gray-800 bg-gray-50 min-h-screen pt-28 pb-16 px-4 animate-fade-in">
-            <!-- CONTAINER MAIS LARGO (Sem max-w-6xl) -->
             <div class="container mx-auto">
                 
-                <!-- Breadcrumbs & Header -->
                 <div class="mb-8">
-                    <a routerLink="/perfil" fragment="pedidos" class="flex items-center gap-2 text-gray-500 hover:text-brand-600 font-semibold transition-colors mb-6 w-fit text-sm">
+                    <a routerLink="/perfil" fragment="pedidos" class="flex items-center gap-2 text-gray-500 hover:text-brand-600 font-semibold transition-colors mb-6 w-fit text-sm cursor-pointer">
                         <i class="ph-bold ph-arrow-left"></i> Voltar para Meus Pedidos
                     </a>
 
@@ -29,7 +25,6 @@
                                 <div class="flex items-center gap-3 flex-wrap">
                                     <h1 class="text-2xl font-bold text-gray-900">Pedido #{{ order.id.substring(0,8) | uppercase }}</h1>
                                     
-                                    <!-- Badge de Status -->
                                     <span class="text-xs font-bold px-3 py-1 rounded-full border uppercase tracking-wide flex items-center gap-1.5"
                                           [ngClass]="{
                                             'bg-blue-50 text-blue-700 border-blue-200': order.status !== 'CANCELADO' && order.status !== 'ENTREGUE',
@@ -63,8 +58,6 @@
                     </div>
                 </div>
                 
-                <!-- Timeline de Rastreamento (Com Datas e Detalhes) -->
-                <!-- Timeline de Rastreamento (Atualizada) -->
                 @if (order.status !== 'CANCELADO') {
                     <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 mb-8 overflow-hidden hidden md:block">
                         <div class="flex items-center gap-2 mb-10">
@@ -73,37 +66,30 @@
                         </div>
                         
                         <div class="relative px-4">
-                            <!-- Container das Linhas (Centralizado com os Ícones) -->
-                            <!-- top-5 = 20px (centro dos ícones). left-16/right-16 (64px) = metade de w-32 (128px) -->
-                            <div class="absolute top-5 left-16 right-16 h-1 -translate-y-1/2 z-0">
-                                <!-- Linha de Fundo -->
-                                <div class="absolute inset-0 w-full h-full bg-gray-200 rounded-full"></div>
-                                <!-- Barra de Progresso -->
-                                <div class="absolute left-0 top-0 h-full bg-brand-600 rounded-full transition-all duration-1000 ease-out shadow-sm" 
-                                     [style.width.%]="progressPercentage()"></div>
+                            <div class="absolute top-5 left-16 right-16 h-1.5 -translate-y-1/2 z-0 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="h-full bg-brand-600 transition-all duration-1000 ease-out shadow-sm relative" 
+                                     [style.width.%]="progressPercentage()">
+                                </div>
                             </div>
                             
-                            <!-- Itens da Timeline -->
                             <div class="relative flex justify-between z-10">
                                 @for (step of timelineSteps(); track step.label) {
                                     <div class="flex flex-col items-center gap-3 text-center w-32 group cursor-default">
                                         
-                                        <!-- Ícone do Passo -->
                                         @if (step.status === 'completed') {
-                                            <div class="w-10 h-10 rounded-full bg-brand-600 text-white flex items-center justify-center border-4 border-white shadow-md ring-2 ring-brand-100 transition-all group-hover:scale-110 relative bg-white">
+                                            <div class="w-10 h-10 rounded-full bg-brand-600 text-white flex items-center justify-center border-4 border-white shadow-md ring-2 ring-brand-100 transition-all group-hover:scale-110 relative z-10">
                                                 <i class="ph-bold ph-check text-lg"></i>
                                             </div>
                                         } @else if (step.status === 'current') {
-                                            <div class="w-10 h-10 rounded-full bg-white text-brand-600 flex items-center justify-center border-4 border-brand-100 shadow-md ring-2 ring-brand-500 animate-pulse relative">
+                                            <div class="w-10 h-10 rounded-full bg-white text-brand-600 flex items-center justify-center border-4 border-brand-100 shadow-md ring-2 ring-brand-500 animate-pulse relative z-10">
                                                 <i [class]="'ph-fill ' + step.icon + ' text-lg'"></i>
                                             </div>
                                         } @else {
-                                            <div class="w-10 h-10 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center border-4 border-white shadow-sm relative">
+                                            <div class="w-10 h-10 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center border-4 border-white shadow-sm relative z-10">
                                                 <i [class]="'ph-bold ' + step.icon + ' text-lg'"></i>
                                             </div>
                                         }
 
-                                        <!-- Textos -->
                                         <div class="flex flex-col items-center">
                                             <p class="text-xs font-bold uppercase tracking-wide"
                                                [ngClass]="{
@@ -114,9 +100,8 @@
                                                 {{ step.label }}
                                             </p>
                                             
-                                            <!-- Data ou Info Extra -->
                                             @if (step.dateOrInfo) {
-                                                <span class="text-[10px] mt-1 font-medium bg-gray-100 px-2 py-0.5 rounded-full text-gray-600 border border-gray-200">
+                                                <span class="text-[10px] mt-1 font-medium bg-gray-50 px-2 py-0.5 rounded-md text-gray-500 border border-gray-100 whitespace-nowrap">
                                                     {{ step.dateOrInfo }}
                                                 </span>
                                             } @else {
@@ -138,7 +123,6 @@
                 
                 <div class="flex flex-col lg:flex-row gap-8">
                     
-                    <!-- Lista de Produtos -->
                     <div class="w-full lg:w-2/3 space-y-6">
                         <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
                             <div class="p-6 border-b border-gray-100 bg-gray-50/30 flex justify-between items-center">
@@ -153,7 +137,6 @@
                                 @for (item of items; track item.nomeProduto) {
                                     <div class="p-6 flex flex-col sm:flex-row items-center gap-5 hover:bg-gray-50 transition-colors group relative">
                                         
-                                        <!-- Imagem com Link (usando 'id' e 'imagens' do JSON) -->
                                         @if (item.id) {
                                             <a [routerLink]="['/produto', item.id]" target="_blank" class="w-20 h-20 bg-white rounded-xl border border-gray-200 overflow-hidden shrink-0 flex items-center justify-center relative shadow-sm cursor-pointer hover:opacity-80 transition-opacity">
                                                 @if (item.imagens && item.imagens.length > 0) {
@@ -204,10 +187,9 @@
                                                 <span class="font-bold text-gray-900 text-lg block">{{ item.subTotal | currency:'BRL' }}</span>
                                             </div>
 
-                                            <!-- Botão Ver Produto -->
                                             @if (item.id) {
                                                 <a [routerLink]="['/produto', item.id]" target="_blank" class="bg-white border border-gray-200 text-gray-500 hover:text-brand-600 hover:border-brand-200 p-2 rounded-lg transition-colors shadow-sm group-hover:shadow cursor-pointer" 
-                                                        title="Ver Produto em Nova Aba">
+                                                   title="Ver Produto em Nova Aba">
                                                     <i class="ph-bold ph-arrow-right"></i>
                                                 </a>
                                             }
@@ -218,10 +200,8 @@
                         </div>
                     </div>
                     
-                    <!-- Sidebar: Resumo e Dados -->
                     <div class="w-full lg:w-1/3 space-y-6">
                         
-                        <!-- Resumo Financeiro -->
                         <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
                             <h3 class="font-bold text-gray-900 mb-6 flex items-center gap-2">
                                 <i class="ph-fill ph-receipt text-brand-600"></i> Resumo Financeiro
@@ -260,10 +240,8 @@
                             </div>
                         </div>
                         
-                        <!-- Endereço de Entrega -->
                         @if (order.entrega) {
                             <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 relative overflow-hidden">
-                                <!-- Decoração -->
                                 <i class="ph-duotone ph-map-pin absolute -right-6 -bottom-6 text-9xl text-gray-50 rotate-12 opacity-50"></i>
                                 
                                 <div class="flex items-center gap-3 mb-4 relative z-10">
@@ -296,12 +274,10 @@
                             </div>
                         }
                         
-                        <!-- Pagamento -->
                         @if (order.pagamento; as payment) {
                             <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 relative overflow-hidden">
                                 <div class="flex items-center gap-3 mb-4">
                                     <div class="bg-purple-50 p-2 rounded-lg text-purple-600">
-                                        <!-- Ícone Dinâmico -->
                                         @switch (payment.metodo) {
                                             @case ('PIX') { <i class="ph-fill ph-qr-code"></i> }
                                             @case ('BOLETO') { <i class="ph-fill ph-barcode"></i> }
@@ -320,7 +296,7 @@
                                                 'bg-green-50 text-green-700 border-green-200': payment.status === 'APROVADO',
                                                 'bg-yellow-50 text-yellow-700 border-yellow-200': payment.status === 'PENDENTE',
                                                 'bg-red-50 text-red-700 border-red-200': payment.status === 'RECUSADO' || payment.status === 'CANCELADO'
-                                              }">
+                                            }">
                                             {{ payment.status }}
                                         </span>
                                     </div>
@@ -348,7 +324,6 @@
         </main>
     }
     @else {
-        <!-- 3. Erro: Produto não encontrado -->
         <div class="h-screen flex flex-col items-center justify-center text-gray-500 bg-gray-50 px-4 text-center">
             <div class="bg-white p-6 rounded-full shadow-sm mb-4">
                 <i class="ph-duotone ph-warning-circle text-4xl text-red-500"></i>

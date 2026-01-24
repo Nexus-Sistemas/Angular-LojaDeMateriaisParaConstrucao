@@ -98,7 +98,7 @@ export class AdminProductsPageComponent implements OnInit {
             sort: 'titulo,asc'
         };
 
-        const filtro: ProdutoFiltro = {};
+        const filtro: any = {};
         
         if (this.searchTerm()) {
             filtro.termo = this.searchTerm();

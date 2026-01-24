@@ -1,194 +1,280 @@
-<div class="space-y-8 animate-fade-in pb-10 max-w-[1600px] mx-auto px-4 sm:px-6">
-    
-    <!-- Cabeçalho Minimalista -->
-    <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-            <h1 class="text-3xl font-black text-gray-900 tracking-tight">Clientes</h1>
-            <p class="text-sm text-gray-500 mt-1">Gestão da base de utilizadores e níveis de acesso</p>
-        </div>
-        
-        <div class="flex items-center gap-3">
-            <button routerLink="/dashboard-admin/relatorios-administrativos" 
-                    class="p-3 text-gray-500 hover:text-gray-900 hover:bg-white rounded-2xl transition-all border border-transparent hover:border-gray-200 shadow-sm sm:shadow-none" 
-                    title="Relatórios">
-                <i class="ph-bold ph-chart-line-up text-xl"></i>
-            </button>
-            <button routerLink="/dashboard-admin/registrar-cliente" 
-                    class="bg-brand-600 text-white text-sm font-bold px-6 py-3 rounded-2xl hover:bg-brand-700 transition-all shadow-lg shadow-brand-500/20 active:scale-95 flex items-center gap-2 cursor-pointer">
-                <i class="ph-bold ph-user-plus text-lg"></i>
-                Novo Cliente
-            </button>
-        </div>
-    </header>
-    
-    <!-- Filtros e Busca -->
-    <section class="flex flex-col sm:flex-row gap-4 items-center justify-between bg-white p-2 rounded-2xl border border-gray-100 shadow-sm">
-        <div class="relative w-full md:max-w-md group">
-            <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-500 transition-colors"></i>
-            <input type="text" 
-                   [ngModel]="searchTerm()"
-                   (ngModelChange)="searchTerm.set($event)"
-                   placeholder="Nome, e-mail ou identificador..." 
-                   class="w-full pl-11 pr-4 py-3 bg-gray-50/50 border-none focus:ring-0 rounded-xl outline-none text-sm text-gray-700 placeholder:text-gray-400">
-        </div>
-        
-        <div class="flex items-center gap-2 pr-2">
-            <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest mr-2 hidden lg:block">Filtrar por:</span>
-            <select class="bg-gray-50 border-none text-xs font-bold text-gray-600 rounded-xl px-4 py-2 cursor-pointer outline-none focus:ring-2 focus:ring-brand-100">
-                <option>Todos os Clientes</option>
-                <option>Apenas Ativos</option>
-                <option>Apenas Bloqueados</option>
-            </select>
-        </div>
-    </section>
+<div
+  class="space-y-8 animate-fade-in pb-10 max-w-[1600px] mx-auto px-4 sm:px-6"
+>
+  <header
+    class="flex flex-col md:flex-row md:items-center justify-between gap-4"
+  >
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 tracking-tight">
+        Gestão de Clientes
+      </h1>
+      <p class="text-sm text-gray-500 mt-0.5">
+        Base de usuários e controle de acesso
+      </p>
+    </div>
 
-    <!-- Tabela -->
-    <div class="bg-white rounded-3xl border border-gray-100 overflow-hidden relative min-h-[500px] shadow-sm">
-        
-        @if (isLoading()) {
-            <div class="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-30 flex flex-col items-center justify-center text-brand-600">
-                <i class="ph ph-spinner animate-spin text-4xl mb-2"></i>
-                <span class="text-[10px] font-black uppercase tracking-[0.2em]">Sincronizando...</span>
-            </div>
+    <div class="flex items-center gap-2">
+      <button
+        routerLink="/dashboard-admin/relatorios-administrativos"
+        class="p-2.5 text-gray-500 hover:text-gray-900 hover:bg-white rounded-xl transition-all cursor-pointer border border-transparent hover:border-gray-200"
+        title="Relatórios"
+      >
+        <i class="ph-bold ph-chart-line-up text-xl"></i>
+      </button>
+      <button
+        routerLink="/dashboard-admin/registrar-cliente"
+        class="bg-brand-600 text-white text-sm font-bold px-5 py-2.5 rounded-xl hover:bg-brand-700 transition-all shadow-sm active:scale-[0.98] cursor-pointer flex items-center gap-2"
+      >
+        <i class="ph-bold ph-user-plus"></i>
+        Novo Cliente
+      </button>
+    </div>
+  </header>
+
+  <section class="flex flex-col md:flex-row gap-4 items-center justify-between">
+    <div class="relative w-full md:max-w-sm group">
+      <i
+        class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-500 transition-colors"
+      ></i>
+      <input
+        type="text"
+        [ngModel]="searchTerm()"
+        (ngModelChange)="onSearch($event)"
+        placeholder="Buscar por nome, e-mail ou CPF..."
+        class="w-full pl-10 pr-4 py-2 bg-transparent border-b border-gray-200 focus:border-brand-500 transition-all outline-none text-sm text-gray-700 placeholder:text-gray-400"
+      />
+    </div>
+
+    <div
+      class="flex items-center gap-1 overflow-x-auto scrollbar-hide w-full md:w-auto"
+    >
+      <button
+        class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-brand-600 bg-brand-50"
+      >
+        Todos
+      </button>
+      <button
+        class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+      >
+        Ativos
+      </button>
+      <button
+        class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap text-gray-500 hover:text-gray-800 hover:bg-gray-100"
+      >
+        Bloqueados
+      </button>
+    </div>
+  </section>
+
+  <div
+    class="bg-white rounded-2xl border border-gray-100 overflow-hidden relative min-h-[500px] shadow-sm flex flex-col"
+  >
+    @if (isLoading()) {
+      <div
+        class="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-30 flex items-center justify-center text-brand-600"
+      >
+        <i class="ph ph-spinner animate-spin text-3xl"></i>
+      </div>
+    }
+
+    <div class="overflow-x-auto flex-1">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr
+            class="text-[10px] text-gray-400 uppercase tracking-widest border-b border-gray-50 font-bold bg-gray-50/30"
+          >
+            <th class="px-6 py-4">Cliente / ID</th>
+            <th class="px-6 py-4">Contato</th>
+            <th class="px-6 py-4">Documento</th>
+            <th class="px-6 py-4">Status</th>
+            <th class="px-6 py-4 text-center w-24">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="text-sm divide-y divide-gray-50">
+          @for (customer of customers(); track customer.id) {
+            <tr class="hover:bg-gray-50/50 transition-colors group">
+              <td class="px-6 py-5">
+                <div class="flex items-center gap-4">
+                  <div
+                    class="w-12 h-12 rounded-xl bg-white border border-gray-200 flex items-center justify-center shrink-0 overflow-hidden relative group-hover:border-brand-200 transition-colors"
+                  >
+                    <img
+                      [src]="
+                        'https://ui-avatars.com/api/?name=' +
+                        customer.nome +
+                        '&background=f3f4f6&color=4b5563&size=128&font-size=0.4'
+                      "
+                      [alt]="customer.nome"
+                      class="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div class="flex flex-col min-w-0">
+                    <span
+                      class="font-bold text-gray-900 truncate max-w-[200px]"
+                      [title]="customer.nome"
+                    >
+                      {{ customer.nome }}
+                    </span>
+                    <div class="flex items-center gap-2 mt-0.5">
+                      <span
+                        class="text-[10px] font-mono text-gray-500 bg-gray-100 px-1.5 rounded border border-gray-200"
+                      >
+                        {{ customer.id.substring(0, 8) }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <td class="px-6 py-4">
+                <div class="flex flex-col gap-0.5">
+                  <span class="text-gray-700 font-medium text-sm">{{
+                    customer.email
+                  }}</span>
+                  <div
+                    class="flex items-center gap-1.5 text-[10px] text-gray-400 font-bold uppercase"
+                  >
+                    <i class="ph-bold ph-phone"></i>
+                    {{
+                      (customer.telefone || ""
+                        | mask: "(00) 0000-0000 || (00) 00000-0000") || "---"
+                    }}
+                  </div>
+                </div>
+              </td>
+
+              <td class="px-6 py-4">
+                <span
+                  class="font-mono text-[11px] text-gray-500 bg-gray-50 px-2 py-1 rounded-lg border border-gray-100 inline-block"
+                >
+                  {{ (customer.cpf || "" | mask: "000.000.000-00") || "---" }}
+                </span>
+              </td>
+
+              <td class="px-6 py-4">
+                <button
+                  (click)="toggleStatus(customer)"
+                  class="px-2 py-0.5 rounded-md text-[10px] font-bold border uppercase inline-flex items-center gap-1.5 transition-colors cursor-pointer"
+                  [ngClass]="
+                    true
+                      ? 'text-green-600 bg-green-50 border-green-100 hover:bg-green-100'
+                      : 'text-red-600 bg-red-50 border-red-100'
+                  "
+                >
+                  <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                  Ativo
+                </button>
+              </td>
+
+              <td class="px-6 py-4 text-center">
+                <div
+                  class="flex items-center justify-end gap-1 transition-all duration-200 translate-x-2"
+                >
+                  <button
+                    [routerLink]="['/dashboard-admin/registrar-cliente']"
+                    [queryParams]="{ id: customer.id }"
+                    class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+                    title="Editar"
+                  >
+                    <i class="ph-bold ph-pencil-simple"></i>
+                  </button>
+
+                  <button
+                    (click)="deleteCustomer(customer)"
+                    class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                    title="Remover"
+                  >
+                    <i class="ph-bold ph-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            @if (!isLoading()) {
+              <tr>
+                <td colspan="5" class="px-6 py-24 text-center">
+                  <div
+                    class="flex flex-col items-center justify-center text-gray-400"
+                  >
+                    <div
+                      class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-3"
+                    >
+                      <i class="ph-duotone ph-users text-3xl opacity-50"></i>
+                    </div>
+                    <p class="text-sm font-medium">
+                      Nenhum cliente encontrado.
+                    </p>
+                    <button
+                      (click)="onSearch('')"
+                      class="mt-2 text-brand-600 text-xs font-bold hover:underline cursor-pointer"
+                    >
+                      Limpar filtros
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <footer
+      class="px-6 py-4 border-t border-gray-50 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white"
+    >
+      <div
+        class="flex items-center gap-3 text-xs text-gray-500 order-2 sm:order-1"
+      >
+        <span>Mostrar</span>
+        <select
+          [ngModel]="pageSize()"
+          (ngModelChange)="updatePageSize($event)"
+          class="bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-1.5 outline-none cursor-pointer"
+        >
+          <option [value]="5">5</option>
+          <option [value]="10">10</option>
+          <option [value]="20">20</option>
+          <option [value]="50">50</option>
+        </select>
+        <span>por página</span>
+      </div>
+
+      <div class="flex items-center gap-1 order-1 sm:order-2">
+        <button
+          (click)="changePage(currentPage() - 1)"
+          [disabled]="currentPage() === 0 || isLoading()"
+          class="px-3 py-1.5 rounded-lg text-gray-500 hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition-colors text-xs font-bold cursor-pointer"
+        >
+          Anterior
+        </button>
+
+        @for (page of visiblePages(); track page) {
+          <button
+            (click)="goToPage(page)"
+            [class.bg-brand-600]="page === currentPage()"
+            [class.text-white]="page === currentPage()"
+            [class.text-gray-600]="page !== currentPage()"
+            [class.hover:bg-gray-100]="page !== currentPage()"
+            class="w-8 h-8 rounded-lg text-xs font-bold transition-all flex items-center justify-center cursor-pointer"
+          >
+            {{ page + 1 }}
+          </button>
         }
 
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="text-[10px] text-gray-400 uppercase tracking-[0.15em] border-b border-gray-50 font-black bg-gray-50/30">
-                        <th class="px-8 py-5">Identificação</th>
-                        <th class="px-6 py-5">Contato</th>
-                        <th class="px-6 py-5">Documento</th>
-                        <th class="px-6 py-5">Status</th>
-                        <th class="px-8 py-5 text-center">Ações</th>
-                    </tr>
-                </thead>
-                <tbody class="text-sm divide-y divide-gray-50">
-                    @for (customer of filteredCustomers(); track customer.id) {
-                        <tr class="hover:bg-gray-50/40 transition-colors group">
-                            <!-- Cliente -->
-                            <td class="px-8 py-6">
-                                <div class="flex items-center gap-4">
-                                    <div class="w-11 h-11 rounded-2xl bg-gray-100 border border-gray-100 flex items-center justify-center text-gray-400 shrink-0 overflow-hidden shadow-xs group-hover:border-brand-100 transition-colors">
-                                        <img [src]="'https://ui-avatars.com/api/?name=' + customer.nome + '&background=f3f4f6&color=4b5563&font-size=0.33'" class="w-full h-full object-cover">
-                                    </div>
-                                    <div class="flex flex-col">
-                                        <span class="font-bold text-gray-900 group-hover:text-brand-600 transition-colors">{{ customer.nome }}</span>
-                                        <span class="text-[10px] font-mono text-gray-400 uppercase tracking-tighter">ID: {{ customer.id.substring(0,8) }}</span>
-                                    </div>
-                                </div>
-                            </td>
-                            
-                            <!-- Contato -->
-                            <td class="px-6 py-6">
-                                <div class="flex flex-col gap-0.5">
-                                    <span class="text-gray-700 font-medium">{{ customer.email }}</span>
-                                    <div class="flex items-center gap-1.5 text-[10px] text-gray-400 font-bold uppercase">
-                                        <i class="ph ph-phone"></i> (--) ----- ----
-                                    </div>
-                                </div>
-                            </td>
+        <button
+          (click)="changePage(currentPage() + 1)"
+          [disabled]="currentPage() >= totalPages() - 1 || isLoading()"
+          class="px-3 py-1.5 rounded-lg text-gray-500 hover:bg-gray-100 disabled:opacity-30 disabled:hover:bg-transparent transition-colors text-xs font-bold cursor-pointer"
+        >
+          Próxima
+        </button>
+      </div>
 
-                            <!-- CPF -->
-                            <td class="px-6 py-6">
-                                <span class="font-mono text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded-lg border border-gray-100">
-                                    ***.***.***-**
-                                </span>
-                            </td>
-
-                            <!-- QUICK STATUS TOGGLE -->
-                            <td class="px-6 py-6">
-                                <button (click)="toggleStatus(customer)" 
-                                        class="px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider border inline-flex items-center gap-2 transition-all cursor-pointer group/status"
-                                        [ngClass]="{
-                                          'bg-green-50 text-green-700 border-green-200 hover:bg-green-100': true,
-                                          'bg-red-50 text-red-700 border-red-200 hover:bg-red-100': false
-                                        }">
-                                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                                    Ativo
-                                    <i class="ph-bold ph-arrows-counter-clockwise opacity-0 group-hover/status:opacity-100 transition-opacity ml-1"></i>
-                                </button>
-                            </td>
-
-                            <!-- Ações -->
-                            <td class="px-8 py-6">
-                                <div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button class="p-2.5 text-gray-400 hover:text-brand-600 hover:bg-brand-50 rounded-xl transition-all cursor-pointer" title="Visualizar">
-                                        <i class="ph-bold ph-eye text-lg"></i>
-                                    </button>
-                                    <button [routerLink]="['/dashboard-admin/registrar-cliente']" [queryParams]="{id: customer.id}"
-                                            class="p-2.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all cursor-pointer" title="Editar">
-                                        <i class="ph-bold ph-pencil-simple text-lg"></i>
-                                    </button>
-                                    <button (click)="deleteCustomer(customer)" 
-                                            class="p-2.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all cursor-pointer" title="Remover">
-                                        <i class="ph-bold ph-trash text-lg"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    } @empty {
-                        @if (!isLoading()) {
-                            <tr>
-                                <td colspan="5" class="px-6 py-32 text-center text-gray-400 italic">
-                                    <div class="flex flex-col items-center gap-4">
-                                        <div class="bg-gray-50 p-6 rounded-full">
-                                            <i class="ph-duotone ph-users-three text-5xl opacity-20"></i>
-                                        </div>
-                                        <div>
-                                            <p class="text-base font-bold text-gray-500">Nenhum cliente encontrado</p>
-                                            <button (click)="loadCustomers()" class="mt-2 text-xs font-black text-brand-600 hover:underline uppercase tracking-widest cursor-pointer">Tentar novamente</button>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    }
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- PAGINAÇÃO PREMIUM -->
-        <footer class="px-8 py-6 border-t border-gray-50 flex flex-col sm:flex-row items-center justify-between bg-gray-50/30 gap-6">
-            <div class="flex flex-col items-center sm:items-start">
-                <span class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Base de Dados</span>
-                <p class="text-xs font-bold text-gray-600 mt-1">
-                    Exibindo <span class="text-gray-900">{{ filteredCustomers().length }}</span> de <span class="text-gray-900">{{ totalElements() }}</span> registros
-                </p>
-            </div>
-            
-            <div class="flex items-center gap-2">
-                <!-- Botão Voltar -->
-                <button (click)="changePage(-1)" 
-                        [disabled]="currentPage() === 0 || isLoading()"
-                        class="p-2.5 border border-gray-200 bg-white rounded-xl text-gray-400 hover:text-brand-600 hover:border-brand-200 disabled:opacity-30 transition-all cursor-pointer shadow-sm active:scale-90">
-                    <i class="ph-bold ph-caret-left"></i>
-                </button>
-                
-                <!-- Números das Páginas -->
-                <div class="flex items-center gap-1.5 px-2">
-                    @for (page of pagesArray(); track page) {
-                        @if (page === currentPage() || (page >= currentPage() - 1 && page <= currentPage() + 1) || page === 0 || page === totalPages() - 1) {
-                            <button (click)="goToPage(page)"
-                                    class="w-10 h-10 flex items-center justify-center text-xs font-black rounded-xl transition-all cursor-pointer"
-                                    [ngClass]="page === currentPage() 
-                                        ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/30 scale-110' 
-                                        : 'bg-white border border-gray-100 text-gray-500 hover:border-brand-200 hover:text-brand-600 shadow-sm'">
-                                {{ page + 1 }}
-                            </button>
-                        } @else if (page === 1 && currentPage() > 2 || page === totalPages() - 2 && currentPage() < totalPages() - 3) {
-                            <span class="w-6 text-center text-gray-300 font-bold">...</span>
-                        }
-                    }
-                </div>
-
-                <!-- Botão Próximo -->
-                <button (click)="changePage(1)" 
-                        [disabled]="(currentPage() + 1) >= totalPages() || isLoading()"
-                        class="p-2.5 border border-gray-200 bg-white rounded-xl text-gray-400 hover:text-brand-600 hover:border-brand-200 disabled:opacity-30 transition-all cursor-pointer shadow-sm active:scale-90">
-                    <i class="ph-bold ph-caret-right"></i>
-                </button>
-            </div>
-        </footer>
-    </div>
+      <div
+        class="text-[10px] text-gray-400 font-bold uppercase tracking-widest order-3"
+      >
+        Total de {{ totalElements() }} clientes
+      </div>
+    </footer>
+  </div>
 </div>

@@ -40,11 +40,16 @@ export class UsuarioService {
         return this.http.patch(url, null, { params: { fileName } });
     }
     
-    listarTodosClientes(pageable?: PageableParams): Observable<Page<Cliente>> {
+    listarTodosClientes(pageable?: PageableParams, termo?: string): Observable<Page<Cliente>> {
         let params = new HttpParams();
+        
         if (pageable?.page !== undefined) params = params.set('page', pageable.page);
         if (pageable?.size !== undefined) params = params.set('size', pageable.size);
         if (pageable?.sort) params = params.set('sort', pageable.sort);
+        
+        if (termo) {
+            params = params.set('termo', termo);
+        }
         
         return this.http.get<Page<Cliente>>(`${this.apiUrl}/clientes`, { params });
     }
