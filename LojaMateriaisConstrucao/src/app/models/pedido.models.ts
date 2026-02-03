@@ -6,7 +6,7 @@ export enum StatusPedido {
   EM_PREPARACAO = 'EM_PREPARACAO',
   ENVIADO = 'ENVIADO',
   ENTREGUE = 'ENTREGUE',
-  CANCELADO = 'CANCELADO',
+  CANCELADO = 'CANCELADO'
 }
 
 export enum StatusPagamento {

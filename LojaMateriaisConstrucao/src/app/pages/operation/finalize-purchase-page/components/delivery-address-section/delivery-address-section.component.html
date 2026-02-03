@@ -1,0 +1,143 @@
+<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+    <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <span
+            class="bg-brand-100 text-brand-700 w-6 h-6 rounded-full flex items-center justify-center text-xs"
+            >2</span
+        >
+        Endereço de Entrega
+    </h3>
+
+    <div class="space-y-3">
+        <!-- Lista de Endereços Existentes -->
+        @if (!showAddressForm()) {
+            @if (addresses().length > 0) {
+                @for (address of addresses(); track address.id) {
+                    <label
+                        class="flex items-start gap-3 p-4 border rounded-xl cursor-pointer relative transition-all group"
+                        [ngClass]="{
+                            'border-brand-500 bg-brand-50 ring-1 ring-brand-500':
+                                selectedAddressId() === address.id,
+                            'border-gray-200 hover:bg-gray-50':
+                                selectedAddressId() !== address.id,
+                        }"
+                    >
+                        <!-- CORREÇÃO: Emite o evento selectAddress -->
+                        <input
+                            type="radio"
+                            name="deliveryAddress"
+                            [value]="address.id"
+                            [checked]="selectedAddressId() === address.id"
+                            (change)="selectAddress.emit(address.id)"
+                            class="mt-1 text-brand-600 focus:ring-brand-500 accent-brand-600"
+                        />
+
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2">
+                                <span class="font-bold text-gray-900 block text-sm">
+                                    {{ address.apelido }}
+                                </span>
+                                @if (address.principal) {
+                                    <span
+                                        class="text-[10px] bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded font-bold"
+                                        >Principal</span
+                                    >
+                                }
+                            </div>
+
+                            <p class="text-sm text-gray-600 mt-1">
+                                {{ address.logradouro }}, {{ address.numero }}
+                                @if (address.complemento) {
+                                    - {{ address.complemento }}
+                                }
+                                <br />
+                                {{ address.bairro }}, {{ address.cidade }} -
+                                {{ address.uf }}
+                                <br />
+                                CEP: {{ address.cep | mask: "00000-000" }}
+                            </p>
+                        </div>
+
+                        <!-- Ações -->
+                        <div class="absolute top-4 right-4 flex gap-2">
+                            @if (!address.principal) {
+                                <!-- CORREÇÃO: Chama o helper onSetPrimary -->
+                                <button
+                                    type="button"
+                                    (click)="onSetPrimary(address.id, $event)"
+                                    class="text-gray-400 hover:text-yellow-500 p-1 rounded-full hover:bg-yellow-50 transition-colors"
+                                    title="Definir como Principal"
+                                >
+                                    <i class="ph-bold ph-star"></i>
+                                </button>
+                            }
+
+                            <!-- CORREÇÃO: Emite editAddress -->
+                            <button
+                                type="button"
+                                (click)="$event.stopPropagation(); editAddress.emit(address)"
+                                class="text-gray-400 hover:text-brand-600 p-1 rounded-full hover:bg-brand-50 transition-colors"
+                                title="Editar"
+                            >
+                                <i class="ph-bold ph-pencil-simple"></i>
+                            </button>
+
+                            <!-- CORREÇÃO: Emite deleteAddress -->
+                            <button
+                                type="button"
+                                (click)="$event.stopPropagation(); deleteAddress.emit(address.id)"
+                                class="text-gray-400 hover:text-red-600 p-1 rounded-full hover:bg-red-50 transition-colors"
+                                title="Excluir"
+                            >
+                                <i class="ph-bold ph-trash"></i>
+                            </button>
+                        </div>
+                    </label>
+                }
+
+                <!-- CORREÇÃO: Emite toggleForm -->
+                <button
+                    type="button"
+                    (click)="toggleForm.emit()"
+                    class="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 font-bold text-sm hover:border-brand-400 hover:text-brand-600 hover:bg-brand-50 transition-all flex items-center justify-center gap-2"
+                >
+                    <i class="ph-bold ph-plus"></i> Adicionar novo endereço
+                </button>
+            } @else {
+                <!-- Destaque para Cadastro Obrigatório -->
+                <div
+                    class="text-center py-8 px-4 bg-orange-50 border-2 border-dashed border-orange-200 rounded-xl animate-fade-in"
+                >
+                    <div
+                        class="bg-white p-3 rounded-full inline-block mb-3 shadow-sm text-orange-500"
+                    >
+                        <i class="ph-duotone ph-map-pin text-2xl"></i>
+                    </div>
+                    <p class="text-orange-800 font-bold mb-1">
+                        Endereço de entrega obrigatório
+                    </p>
+                    <p class="text-sm text-orange-600/80 mb-4">
+                        Cadastre um endereço principal para receber seus produtos.
+                    </p>
+
+                    <!-- CORREÇÃO: Emite toggleForm -->
+                    <button
+                        type="button"
+                        (click)="toggleForm.emit()"
+                        class="w-full sm:w-auto px-8 py-3 bg-white border-2 border-dashed border-orange-300 text-orange-700 font-bold rounded-xl shadow-sm hover:bg-orange-50 hover:border-orange-400 transition-all flex items-center justify-center gap-2 mx-auto"
+                    >
+                        <i class="ph-bold ph-plus"></i>
+                        Cadastrar Endereço Principal
+                    </button>
+                </div>
+            }
+        } @else {
+            <!-- CORREÇÃO: Emite saveAddress e toggleForm -->
+            <app-address-form
+                [initialData]="editingAddress()"
+                (save)="saveAddress.emit($event)"
+                (cancel)="toggleForm.emit()"
+            >
+            </app-address-form>
+        }
+    </div>
+</div>

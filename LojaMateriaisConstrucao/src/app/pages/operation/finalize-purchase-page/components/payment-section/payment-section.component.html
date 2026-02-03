@@ -1,0 +1,132 @@
+<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+    <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <span
+            class="bg-brand-100 text-brand-700 w-6 h-6 rounded-full flex items-center justify-center text-xs"
+            >4</span
+        >
+        Pagamento
+    </h3>
+
+    <!-- Botões de Seleção -->
+    <div class="grid grid-cols-3 gap-3 mb-6">
+        <button
+            type="button"
+            (click)="setPayment('credit')"
+            class="flex flex-col items-center gap-2 p-3 border-2 rounded-xl transition-all"
+            [class.border-brand-500]="paymentMethod() === 'credit'"
+            [class.bg-brand-50]="paymentMethod() === 'credit'"
+            [class.text-brand-700]="paymentMethod() === 'credit'"
+            [class.border-gray-200]="paymentMethod() !== 'credit'"
+            [class.text-gray-500]="paymentMethod() !== 'credit'"
+        >
+            <i class="ph-duotone ph-credit-card text-2xl"></i>
+            <span class="text-xs font-bold">Cartão</span>
+        </button>
+
+        <button
+            type="button"
+            (click)="setPayment('pix')"
+            class="flex flex-col items-center gap-2 p-3 border-2 rounded-xl transition-all"
+            [class.border-brand-500]="paymentMethod() === 'pix'"
+            [class.bg-brand-50]="paymentMethod() === 'pix'"
+            [class.text-brand-700]="paymentMethod() === 'pix'"
+            [class.border-gray-200]="paymentMethod() !== 'pix'"
+            [class.text-gray-500]="paymentMethod() !== 'pix'"
+        >
+            <i class="ph-duotone ph-qr-code text-2xl"></i>
+            <span class="text-xs font-bold">Pix (-5%)</span>
+        </button>
+
+        <button
+            type="button"
+            (click)="setPayment('boleto')"
+            class="flex flex-col items-center gap-2 p-3 border-2 rounded-xl transition-all"
+            [class.border-brand-500]="paymentMethod() === 'boleto'"
+            [class.bg-brand-50]="paymentMethod() === 'boleto'"
+            [class.text-brand-700]="paymentMethod() === 'boleto'"
+            [class.border-gray-200]="paymentMethod() !== 'boleto'"
+            [class.text-gray-500]="paymentMethod() !== 'boleto'"
+        >
+            <i class="ph-duotone ph-barcode text-2xl"></i>
+            <span class="text-xs font-bold">Boleto</span>
+        </button>
+    </div>
+
+    <!-- Conteúdo: Cartão -->
+    <div *ngIf="paymentMethod() === 'credit'" class="space-y-4 animate-fade-in">
+        <div class="relative">
+            <i
+                class="ph-bold ph-credit-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            ></i>
+            <input
+                type="text"
+                mask="0000 0000 0000 0000"
+                placeholder="Número do Cartão"
+                class="w-full pl-10 p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none focus:border-brand-500 transition-all"
+            />
+        </div>
+        <div class="relative">
+            <i
+                class="ph-bold ph-user absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            ></i>
+            <input
+                type="text"
+                placeholder="Nome Impresso no Cartão"
+                class="w-full pl-10 p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none focus:border-brand-500 transition-all"
+            />
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+            <input
+                type="text"
+                mask="M0/00"
+                placeholder="Validade (MM/AA)"
+                class="w-full p-3 border border-gray-300 rounded-lg text-sm text-center focus:ring-2 focus:ring-brand-500 focus:outline-none focus:border-brand-500 transition-all"
+            />
+            <input
+                type="text"
+                mask="0000"
+                placeholder="CVV"
+                class="w-full p-3 border border-gray-300 rounded-lg text-sm text-center focus:ring-2 focus:ring-brand-500 focus:outline-none focus:border-brand-500 transition-all"
+            />
+        </div>
+        <select
+            class="w-full p-3 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-brand-500 focus:outline-none focus:border-brand-500 transition-all"
+        >
+            <option>1x de {{ total() | currency: "BRL" }} sem juros</option>
+            <option>2x de {{ total() / 2 | currency: "BRL" }} sem juros</option>
+            <option>3x de {{ total() / 3 | currency: "BRL" }} sem juros</option>
+        </select>
+    </div>
+
+    <!-- Conteúdo: Pix -->
+    <div
+        *ngIf="paymentMethod() === 'pix'"
+        class="text-center py-6 animate-fade-in"
+    >
+        <div
+            class="bg-green-50 p-4 rounded-xl border border-green-100 inline-block mb-4"
+        >
+            <i class="ph-duotone ph-qr-code text-4xl text-green-600"></i>
+        </div>
+        <p class="text-sm text-gray-600 font-medium">
+            O código Pix será gerado após a finalização.
+        </p>
+        <p class="text-xs text-gray-500 mt-1">Aprovação imediata.</p>
+    </div>
+
+    <!-- Conteúdo: Boleto -->
+    <div
+        *ngIf="paymentMethod() === 'boleto'"
+        class="text-center py-6 animate-fade-in"
+    >
+        <div
+            class="bg-gray-50 p-4 rounded-xl border border-gray-200 inline-block mb-4"
+        >
+            <i class="ph-duotone ph-barcode text-4xl text-gray-600"></i>
+        </div>
+        <p class="text-sm text-gray-600 font-medium">
+            O boleto será gerado na próxima tela.
+        </p>
+        <p class="text-xs text-gray-500 mt-1">Vencimento em 3 dias úteis.</p>
+    </div>
+</div>

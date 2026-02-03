@@ -1,0 +1,80 @@
+<div
+    class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 transition-all"
+    [class.opacity-50]="!hasAddressSelected()"
+    [class.pointer-events-none]="!hasAddressSelected()"
+>
+    <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+        <span
+            class="bg-brand-100 text-brand-700 w-6 h-6 rounded-full flex items-center justify-center text-xs"
+            >3</span
+        >
+        Opção de Entrega
+    </h3>
+
+    @if (hasAddressSelected()) {
+        <div class="space-y-3 animate-fade-in">
+            <!-- Opção 1: Econômica -->
+            <label
+                class="flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all hover:bg-gray-50"
+                [class.border-brand-500]="selectedShippingMethod() === 'economic'"
+                [class.bg-brand-50]="selectedShippingMethod() === 'economic'"
+                [class.border-gray-200]="selectedShippingMethod() !== 'economic'"
+            >
+                <div class="flex items-center gap-3">
+                    <input
+                        type="radio"
+                        name="shippingMethod"
+                        value="economic"
+                        [checked]="selectedShippingMethod() === 'economic'"
+                        (change)="selectedShippingMethod.set('economic')"
+                        class="text-brand-600 focus:ring-brand-500 accent-brand-600"
+                    />
+                    <div>
+                        <span class="block text-sm font-bold text-gray-900"
+                            >Entrega Econômica</span
+                        >
+                        <span class="text-xs text-gray-500"
+                            >5 a 7 dias úteis</span
+                        >
+                    </div>
+                </div>
+                <span class="text-sm font-bold text-green-600">Grátis</span>
+            </label>
+
+            <!-- Opção 2: Rápida -->
+            <label
+                class="flex items-center justify-between p-4 border rounded-xl cursor-pointer transition-all hover:bg-gray-50"
+                [class.border-brand-500]="selectedShippingMethod() === 'fast'"
+                [class.bg-brand-50]="selectedShippingMethod() === 'fast'"
+                [class.border-gray-200]="selectedShippingMethod() !== 'fast'"
+            >
+                <div class="flex items-center gap-3">
+                    <input
+                        type="radio"
+                        name="shippingMethod"
+                        value="fast"
+                        [checked]="selectedShippingMethod() === 'fast'"
+                        (change)="selectedShippingMethod.set('fast')"
+                        class="text-brand-600 focus:ring-brand-500 accent-brand-600"
+                    />
+                    <div>
+                        <span class="block text-sm font-bold text-gray-900"
+                            >Entrega Expressa</span
+                        >
+                        <span class="text-xs text-gray-500"
+                            >1 a 2 dias úteis</span
+                        >
+                    </div>
+                </div>
+                <span class="text-sm font-bold text-gray-900">R$ 15,90</span>
+            </label>
+        </div>
+    } @else {
+        <div
+            class="text-center py-4 bg-gray-50 rounded-xl border border-dashed border-gray-200 text-gray-500 text-sm"
+        >
+            <i class="ph-bold ph-map-pin-line mr-1"></i>
+            Selecione um endereço acima para ver as opções de entrega.
+        </div>
+    }
+</div>
